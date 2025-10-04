@@ -1,0 +1,108 @@
+.registerForm{
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 500px;
+    height: 400px;
+    margin: 0 auto;
+    background-color: #373737;
+    overflow: hidden;
+    position: relative;
+}
+.LogInSVG{
+    align-self: center;
+    padding-top: 10px;
+}
+.LogInTitle{
+    font-weight: 600;
+    font-size: 50px;
+    font-family: "Balsamiq Sans", sans-serif;
+    text-align: center;
+    color: #b6b6b6;
+}
+.LogInTitleFirst{
+    color: #202020;
+}
+.LogInProgressWrapper{
+ width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+.LogInProgress{
+    background-color: #404040;
+    border: 1px solid gray;
+    border-radius: 10px;
+    height: 13px;
+    transition: width 0.5s ease;
+}
+.LogInProgress::-moz-progress-bar{
+    background-color: #232323;
+    border-radius: 5px;
+
+}
+
+.LogInInput{
+    border-radius: 10px;
+    width: 80%;
+    height: 35px;
+    padding: 0;
+    border: 1px solid black;
+}
+.LogInInput:focus{
+    outline: 1px solid white;
+}
+
+.LogInInput::placeholder{
+    text-align: center;
+}
+.LogInInputs{
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+.LogInButtonFirst{
+    width: 200px;
+    height: 40px;
+    background-color: #232323;
+    border: none;
+    border-radius: 10px;
+    color: white;
+
+}
+.LogInButtonBack{
+
+}
+.LogInButtonFirstWrapper{
+    margin-top: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.LogInMotion{
+    position: absolute;
+    width: 100%;
+}
+.fileUploader{
+    display: flex;
+    width: 100%;
+    height: 250px;
+    justify-content: center;
+}
+.customFileUpload {
+    width: 80%;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 4px;
+
+}
+
+.customFileUpload:hover {
+    background-color: darkgray;
+}
+input[type="file"] {
+    display: none;
+}
