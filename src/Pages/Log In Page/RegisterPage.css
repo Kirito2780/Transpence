@@ -8,86 +8,93 @@
     overflow: hidden;
     position: relative;
 }
-.LogInSVG{
+.RegisterSVG{
     align-self: center;
     padding-top: 10px;
 }
-.LogInTitle{
+.RegisterTitle{
     font-weight: 600;
     font-size: 50px;
     font-family: "Balsamiq Sans", sans-serif;
     text-align: center;
     color: #b6b6b6;
 }
-.LogInTitleFirst{
+.RegisterTitleFirst{
     color: #202020;
 }
-.LogInProgressWrapper{
+.RegisterProgressWrapper{
  width: 100%;
     margin-top: 10px;
     display: flex;
     justify-content: center;
 }
-.LogInProgress{
+.RegisterProgress{
     background-color: #404040;
     border: 1px solid gray;
     border-radius: 10px;
     height: 13px;
     transition: width 0.5s ease;
 }
-.LogInProgress::-moz-progress-bar{
+.RegisterProgress::-moz-progress-bar{
     background-color: #232323;
     border-radius: 5px;
 
 }
 
-.LogInInput{
+.RegisterInput{
     border-radius: 10px;
     width: 80%;
     height: 35px;
     padding: 0;
     border: 1px solid black;
 }
-.LogInInput:focus{
+.RegisterInput:focus{
     outline: 1px solid white;
 }
 
-.LogInInput::placeholder{
+.RegisterInput::placeholder{
     text-align: center;
 }
-.LogInInputs{
+.RegisterInputs{
     margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 30px;
 }
-.LogInButtonFirst{
+.RegisterButtonFirst{
     width: 200px;
     height: 40px;
     background-color: #232323;
     border: none;
     border-radius: 10px;
     color: white;
+    cursor: pointer;
 
 }
-.LogInButtonBack{
-
+.RegisterButtonBack{
+    cursor: pointer;
+    background-color: #232323;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    width: 70px;
+    margin-bottom: 10px;
 }
-.LogInButtonFirstWrapper{
+.RegisterButtonFirstWrapper{
     margin-top: 40px;
     width: 100%;
     display: flex;
     justify-content: center;
 }
-.LogInMotion{
+.RegisterMotion{
     position: absolute;
     width: 100%;
 }
 .fileUploader{
     display: flex;
     width: 100%;
-    height: 250px;
+    height: 200px;
     justify-content: center;
 }
 .customFileUpload {
@@ -105,4 +112,19 @@
 }
 input[type="file"] {
     display: none;
+}
+.RegisterErrorUserNameMessage{
+    position: absolute;
+    top:10px;
+    color: darkred;
+}
+.RegisterErrorEmailMessage{
+    position: absolute;
+    bottom:185px;
+    color: darkred;
+}
+.RegisterErrorPasswordMessage{
+ position: absolute;
+    bottom:120px;
+    color: darkred;
 }

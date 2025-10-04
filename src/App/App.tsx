@@ -1,10 +1,10 @@
-import LogInPage from "../Pages/Log In Page/LogInPage.tsx";
+import RegisterPage from "../Pages/Log In Page/RegisterPage.tsx";
 import "./App.css";
 
 function App() {
   return (
     <main className="App">
-      <LogInPage />
+      <RegisterPage />
     </main>
   );
 }
