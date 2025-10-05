@@ -1,0 +1,82 @@
+.LogInForm{
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 500px;
+    height: 400px;
+    margin: 0 auto;
+    background-color: #373737;
+    overflow: hidden;
+    position: relative;
+    top: 200px;
+}
+.LogInTitle{
+    font-weight: 600;
+    font-size: 50px;
+    font-family: "Balsamiq Sans", sans-serif;
+    text-align: center;
+    color: #b6b6b6;
+}
+.LogInTitleFirst{
+    color: #202020;
+}
+.LogInInput{
+    border-radius: 10px;
+    width: 80%;
+    height: 35px;
+    padding: 0;
+    border: 1px solid black;
+}
+.LogInInput:focus{
+    outline: 1px solid white;
+}
+
+.LogInInput::placeholder{
+    text-align: center;
+}
+.LogInInputs{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+.LogInInputWrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+.LogInEyeButton{
+    position: absolute;
+    background-color: transparent;
+    border: none;
+    right: 60px;
+    top: 3px;
+}
+.LogInButton{
+    width: 200px;
+    height: 40px;
+    background-color: #232323;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+.LogInButtonWrapper{
+    margin-top: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.BackToRegiLog{
+    background-color: transparent;
+    border: none;
+    transition: 0.2s;
+    border-radius: 50%;
+    width: fit-content;
+    height: 24px;
+}
+.BackToRegiLog:hover{
+    background-color: rgba(0, 0, 0, 0.3);
+}
+

@@ -7,6 +7,7 @@
     background-color: #373737;
     overflow: hidden;
     position: relative;
+    top: 200px;
 }
 .RegisterSVG{
     align-self: center;
@@ -24,7 +25,6 @@
 }
 .RegisterProgressWrapper{
  width: 100%;
-    margin-top: 10px;
     display: flex;
     justify-content: center;
 }
@@ -56,7 +56,7 @@
     text-align: center;
 }
 .RegisterInputs{
-    margin-top: 40px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -127,4 +127,15 @@ input[type="file"] {
  position: absolute;
     bottom:120px;
     color: darkred;
+}
+.BackToRegiLog{
+    background-color: transparent;
+    border: none;
+    transition: 0.2s;
+    border-radius: 50%;
+    width: fit-content;
+    height: 24px;
+}
+.BackToRegiLog:hover{
+    background-color: rgba(0, 0, 0, 0.3);
 }
