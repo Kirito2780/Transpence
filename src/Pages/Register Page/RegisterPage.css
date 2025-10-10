@@ -82,7 +82,7 @@
     margin-bottom: 10px;
 }
 .RegisterButtonFirstWrapper{
-    margin-top: 40px;
+    margin-top: 20px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -120,12 +120,12 @@ input[type="file"] {
 }
 .RegisterErrorEmailMessage{
     position: absolute;
-    bottom:185px;
+    bottom:165px;
     color: darkred;
 }
 .RegisterErrorPasswordMessage{
  position: absolute;
-    bottom:120px;
+    bottom:100px;
     color: darkred;
 }
 .BackToRegiLog{

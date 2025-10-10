@@ -2,10 +2,27 @@ import "./LogInPage.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../Store/Store.tsx";
+import { setToken } from "../../Slices/authSlice.tsx";
+
+interface IForm {
+  username: string;
+  password: string;
+}
 
 const LoginPage = () => {
   const [click, setClick] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const token: string | null = useSelector(
+    (state: RootState) => state.AuthSlice.token,
+  );
+  const { reset, handleSubmit, register } = useForm<IForm>();
 
   const variants = {
     enter: () => ({
@@ -15,9 +32,35 @@ const LoginPage = () => {
     center: { x: 0, opacity: 1 },
   };
 
+  const handleLogIn: SubmitHandler<IForm> = (data) => {
+    const formData = new FormData();
+    formData.append("username", data.username);
+    formData.append("password", data.password);
+
+    axios
+      .post("http://172.30.88.250:8000/auth/token/login/", formData)
+      .then((res) => {
+        if (token == null) {
+          dispatch(setToken(res.data.auth_token));
+          localStorage.setItem("token", res.data.auth_token);
+        } else {
+          return;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    reset();
+    setLoading(true);
+    navigate("/");
+  };
+  if (loading) {
+    return <h2 className={"loading"}>Loading.....</h2>;
+  }
+
   return (
     <div>
-      <form className={"LogInForm"}>
+      <form className={"LogInForm"} onSubmit={handleSubmit(handleLogIn)}>
         <h1 className={"LogInTitle"}>
           <span className={"LogInTitleFirst"}>Trans</span>
           <span className={"LogInTitleSecond"}>pence</span>
@@ -25,7 +68,7 @@ const LoginPage = () => {
         <button
           className={"BackToRegiLog"}
           type="button"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/regilog")}
         >
           <svg
             width="25px"
@@ -69,12 +112,24 @@ const LoginPage = () => {
                 type="text"
                 placeholder={"username"}
                 className={"LogInInput"}
+                {...register("username", {
+                  required: {
+                    value: true,
+                    message: "this field is required!",
+                  },
+                })}
               />
               <div className={"LogInInputWrapper"}>
                 <input
                   type={click ? "text" : "password"}
                   placeholder={"password"}
                   className={"LogInInput"}
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "this field is required!",
+                    },
+                  })}
                 />
                 <button
                   type="button"
@@ -120,7 +175,9 @@ const LoginPage = () => {
               </div>
             </div>
             <div className={"LogInButtonWrapper"}>
-              <button className={"LogInButton"}>Log In</button>
+              <button className={"LogInButton"} type={"submit"}>
+                Log In
+              </button>
             </div>
           </motion.div>
         </AnimatePresence>

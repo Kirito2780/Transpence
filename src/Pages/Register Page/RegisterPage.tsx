@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./RegisterPage.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface IForm {
   username: string;
@@ -24,9 +25,28 @@ const RegisterPage = () => {
   const [stepDirection, setStepDirection] = useState<number>(1);
   const navigate = useNavigate();
 
-  const onRegister: SubmitHandler<IForm> = () => {
+  const onRegister: SubmitHandler<IForm> = (data) => {
+    const formData = new FormData();
+
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+
+    if (data.file && data.file.length > 0) {
+      formData.append("file", data.file[0]);
+    }
+
+    axios
+      .post("http://172.30.88.250:8000/auth/users/", formData)
+      .then((res) => {
+        console.log("success", res);
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+    alert(`Register successfully,Check ${data.email} to log in`);
     reset();
-    alert("asdadasa");
+    navigate("/regilog");
   };
   const nextForm = async () => {
     const isValid = await trigger(["username", "email", "password"]);
@@ -133,7 +153,12 @@ const RegisterPage = () => {
         <label className={"customFileUpload"} htmlFor={"fileUpload"}>
           Choose file
         </label>
-        <input type="file" id={"fileUpload"} />
+        <input
+          type="file"
+          id={"fileUpload"}
+          accept={".xlsx"}
+          {...register("file")}
+        />
       </div>
       <div className={"RegisterButtonFirstWrapper"}>
         <button type={"submit"} className={"RegisterButtonFirst"}>
@@ -152,7 +177,7 @@ const RegisterPage = () => {
       <button
         className={"BackToRegiLog"}
         type="button"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/regilog")}
       >
         <svg
           width="25px"
