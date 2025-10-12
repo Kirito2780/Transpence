@@ -1,6 +1,7 @@
 .App{
-    background-color: #242424;
+    background: linear-gradient(to bottom, #373737, #000000);
     min-height: 100vh;
+
 }
 .loading{
         background-color: #242424;

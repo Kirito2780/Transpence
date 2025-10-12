@@ -4,15 +4,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import type { RootState } from "../../Store/Store.tsx";
 import { useSelector } from "react-redux";
+import InfoItem from "../../Components/InfoItem/InfoItem.tsx";
 
 interface IChartsData {
   operation_type: string;
-  total: number;
+  total_amount: number;
+  count_operations: number;
   [key: string]: string | number;
+}
+interface IItemData {
+  tags: string;
+  total: number;
+  svg: string;
+  date: string;
+  title: string;
 }
 
 const MainPage = () => {
   const [chartData, setChartData] = useState<IChartsData[]>([]);
+  const [itemData, setItemData] = useState<IItemData[]>([]);
   const Colors: string[] = ["#de1a24", "#056517"];
   const token = useSelector((state: RootState) => state.AuthSlice.token);
   useEffect(() => {
@@ -24,13 +34,14 @@ const MainPage = () => {
         },
       })
       .then((res) => {
-        setChartData(res.data.charts.income_vs_expense);
+        setChartData(res.data.total);
+        setItemData(res.data.details);
       })
       .catch((error) => console.log(`Error:${error}`));
   }, []);
   useEffect(() => {
-    console.log(chartData);
-  }, [chartData]);
+    console.log(itemData);
+  }, [itemData]);
 
   const RADIAN = Math.PI / 180;
   const renderCustomizedLabel = ({
@@ -69,30 +80,49 @@ const MainPage = () => {
         <h2 className={"SecondTitle"}>Profile</h2>
       </header>
       <main className={"MainContent"}>
-        <PieChart width={500} height={500}>
-          <Pie
-            data={chartData}
-            cx={"50%"}
-            cy={"50%"}
-            outerRadius={200}
-            stroke="whitesmoke"
-            dataKey={"total"}
-            nameKey={"operation_type"}
-            label={renderCustomizedLabel}
-            labelLine={false}
-            isAnimationActive={true}
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${entry.operation_type}`}
-                fill={Colors[index % Colors.length]}
-                style={{ transition: "0.3s ease" }}
-              ></Cell>
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-        <section className={"expenses"}>hello</section>
+        {chartData.length > 0 && (
+          <PieChart width={500} height={500}>
+            <Pie
+              data={chartData}
+              cx={"50%"}
+              cy={"50%"}
+              outerRadius={200}
+              stroke="whitesmoke"
+              dataKey={"total_amount"}
+              nameKey={"operation_type"}
+              label={renderCustomizedLabel}
+              labelLine={false}
+              isAnimationActive={true}
+            >
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${entry.operation_type}`}
+                  fill={Colors[index % Colors.length]}
+                  style={{ transition: "0.3s ease" }}
+                ></Cell>
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        )}
+        <section className={"expenses"}>
+          <div className={"infoItemsWrapper"}>
+            {!itemData ? (
+              <h2>Loading...</h2>
+            ) : (
+              itemData.map((item, i) => (
+                <InfoItem
+                  key={i}
+                  tags={item.tags}
+                  svg={item.svg}
+                  total={item.total}
+                  date={item.date}
+                  title={item.title}
+                />
+              ))
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );

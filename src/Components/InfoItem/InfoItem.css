@@ -1,0 +1,46 @@
+.infoItem {
+    background-color: #5c5c5c;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 10px;
+    align-items: center;
+    width: 80%;
+}
+.infoItemTitle{
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 30px;
+    width: 33.3%;
+    font-size: 20px;
+}
+
+.infoSvg{
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    padding: 10px;
+}
+.infoItemWrapper{
+    font-size: 20px;
+    color: white;
+    width: 33.3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.itemTag{
+    text-align: left;
+    width: 100px;
+}
+.infoTotal{
+    font-size: 30px;
+    color: white;
+    width: 33.3%;
+    display: flex;
+    justify-content: flex-end;
+
+}
