@@ -37,7 +37,7 @@
 .expenses{
     width: 80%;
     border-radius: 10px 10px 0 0;
-    min-height: 375px;
+    min-height: 700px;
     background: linear-gradient(to bottom, #373737, #000000);
     padding: 50px;
     display: flex;
@@ -54,4 +54,171 @@
     overflow-y: scroll;
     scrollbar-width: none;
 
+}
+.toggleGraphContainer{
+    width: 70px;
+    height: 40px;
+    border-radius: 5px;
+    background: #373737;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    justify-content: center;
+    position: relative;
+    left: 830px;
+    bottom: 30px;
+
+}
+.toggleGraph{
+    display: none;
+}
+.toggleGraphLabel{
+    background-color: #fff;
+    position: relative;
+}
+.toggleGraphLabel:before{
+    content: "";
+    position: absolute;
+    background-color: black;
+    width: 29px;
+    height: 30px;
+    bottom: -15.5px;
+    left: -63px;
+    transition: 0.2s;
+    border-radius: 10px;
+
+
+
+}
+.toggleGraph:checked + .toggleGraphLabel:before{
+    transform:translateX(30px);
+}
+.pieChartSvg{
+    z-index: 1;
+}
+.barChartSvg{
+    z-index: 1;
+}
+.barChartWrapper{
+    width: 1400px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.myDateInput {
+    background-color: #1e1e1e;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+.myDateInput:focus {
+    border-color: #8884d8;
+    box-shadow: 0 0 5px #8884d8;
+}
+.react-datepicker {
+    background-color: #2b2b2b !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
+    border-radius: 10px !important;
+
+}
+
+.react-datepicker__header {
+    background-color: #373737 !important;
+    border-bottom: none !important;
+    color: white !important;
+}
+
+.react-datepicker__day {
+    color: white !important;
+}
+
+.react-datepicker__day--selected {
+    background-color: #8884d8 !important;
+    color: white !important;
+    border-radius: 50% !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+    background-color: #555 !important;
+}
+.datePickerWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.datePickerLabel{
+    color: white;
+    font-size: 20px;
+}
+.datePickerTags{
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+
+}
+.categoryWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100px;
+    overflow-y:scroll;
+}
+.categoryItemWrapper{
+    display: flex;
+    width: 120px;
+    justify-content:space-between;
+    color: white;
+}
+.datePickerHeader{
+    color: white;
+    margin-bottom: 10px;
+}
+.closeDataPickWrapperButtonWrapper{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+}
+.closeDataPickButton{
+    border-radius: 50%;
+    border: none;
+    background-color: #232323;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    color: white;
+
+}
+.datePickerButton{
+    width: 200px;
+    height: 40px;
+    background-color: #232323;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s ease;
+}
+.datePickerButton:hover{
+    transform: scale(1.2);
+}
+.datePickerButtonWrapper{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.calendarSvg{
+    cursor: pointer;
+}
+.NoData{
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
 }
