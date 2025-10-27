@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../Store/Store.tsx";
 import { useEffect, useState } from "react";
 import { setToken } from "../Slices/authSlice.tsx";
+import ItemPage from "../Pages/ItemPage/ItemPage.tsx";
 
 function App() {
   const token = useSelector((state: RootState) => state.AuthSlice.token);
@@ -20,6 +21,7 @@ function App() {
     if (local_token && !token) {
       dispatch(setToken(local_token));
     }
+
     setLoading(false);
   }, [token, dispatch]);
 
@@ -40,6 +42,7 @@ function App() {
         ) : (
           <>
             <Route path={"/"} element={<MainPage />} />
+            <Route path={"/operations/:id"} element={<ItemPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}

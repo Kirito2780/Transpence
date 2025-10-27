@@ -32,27 +32,27 @@ const LoginPage = () => {
     center: { x: 0, opacity: 1 },
   };
 
-  const handleLogIn: SubmitHandler<IForm> = (data) => {
-    const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("password", data.password);
+  const handleLogIn: SubmitHandler<IForm> = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("password", data.password);
 
-    axios
-      .post("http://172.30.88.250:8000/auth/token/login/", formData)
-      .then((res) => {
-        if (token == null) {
-          dispatch(setToken(res.data.auth_token));
-          localStorage.setItem("token", res.data.auth_token);
-        } else {
-          return;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    reset();
-    setLoading(true);
-    navigate("/");
+      const res = await axios.post(
+        "http://172.30.88.250:8000/auth/token/login/",
+        formData,
+      );
+      if (!token) {
+        dispatch(setToken(res.data.auth_token));
+        localStorage.setItem("token", res.data.auth_token);
+      }
+      reset();
+      navigate("/");
+      setLoading(true);
+    } catch (error) {
+      console.error(error);
+      alert("wrong username or password");
+    }
   };
   if (loading) {
     return <h2 className={"loading"}>Loading.....</h2>;

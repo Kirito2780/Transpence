@@ -1,7 +1,7 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import "./RegisterPage.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -10,6 +10,14 @@ interface IForm {
   email: string;
   password: string;
   file?: FileList;
+}
+interface ISuccess {
+  email: string;
+  username: string;
+  import_result: {
+    status: number;
+    message: string;
+  };
 }
 
 const RegisterPage = () => {
@@ -23,30 +31,57 @@ const RegisterPage = () => {
   const [progress, setProgress] = useState<number>(50);
   const [step, setStep] = useState<number>(0);
   const [stepDirection, setStepDirection] = useState<number>(1);
+  const [response, setResponse] = useState<ISuccess | null>(null);
+  const [file, setFile] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const onRegister: SubmitHandler<IForm> = (data) => {
-    const formData = new FormData();
+  useEffect(() => {
+    console.log(file);
+  }, [file]);
 
-    formData.append("username", data.username);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
+  const onRegister: SubmitHandler<IForm> = async (data) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
 
-    if (data.file && data.file.length > 0) {
-      formData.append("file", data.file[0]);
+      formData.append("username", data.username);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+
+      if (data.file && data.file.length > 0) {
+        formData.append("file", data.file[0]);
+        setFile(true);
+      }
+
+      const res = await axios.post(
+        "http://172.30.88.250:8000/auth/users/",
+        formData,
+      );
+      console.log("success", res);
+      const responseData: ISuccess = res.data;
+      setResponse(responseData);
+      const status = responseData.import_result.status;
+      if (status) {
+        if (
+          responseData.import_result.status == 200 ||
+          responseData.import_result.status == 206 ||
+          responseData.import_result.status == 201
+        ) {
+          alert(`Register successfully,Check ${data.email} to log in`);
+          setLoading(false);
+          reset();
+          navigate("/regilog");
+        } else {
+          alert(`failed ${response}`);
+        }
+      } else {
+        null;
+      }
+    } catch (err) {
+      console.log("error", err);
+      alert("Something went wrong. Please try again");
     }
-
-    axios
-      .post("http://172.30.88.250:8000/auth/users/", formData)
-      .then((res) => {
-        console.log("success", res);
-      })
-      .catch((err) => {
-        console.log("error", err);
-      });
-    alert(`Register successfully,Check ${data.email} to log in`);
-    reset();
-    navigate("/regilog");
   };
   const nextForm = async () => {
     const isValid = await trigger(["username", "email", "password"]);
@@ -151,13 +186,19 @@ const RegisterPage = () => {
       </button>
       <div className={"fileUploader"}>
         <label className={"customFileUpload"} htmlFor={"fileUpload"}>
-          Choose file
+          {file ? <span>File uploaded</span> : <span>Choose file</span>}
         </label>
         <input
           type="file"
           id={"fileUpload"}
           accept={".xlsx"}
-          {...register("file")}
+          {...register("file", {
+            onChange: (e) => {
+              const file = e.target.files;
+              if (file) setFile(true);
+            },
+          })}
+          disabled={loading}
         />
       </div>
       <div className={"RegisterButtonFirstWrapper"}>

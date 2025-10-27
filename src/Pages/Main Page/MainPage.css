@@ -119,11 +119,15 @@
     border-color: #8884d8;
     box-shadow: 0 0 5px #8884d8;
 }
+.react-datepicker-popper{
+    z-index: 10 !important;
+}
 .react-datepicker {
     background-color: #2b2b2b !important;
     border: none !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
     border-radius: 10px !important;
+
 
 }
 
@@ -221,4 +225,59 @@
     color: white;
     font-weight: bold;
     font-size: 40px;
+}
+.toggleDiagramTypeWrapper{
+    width: 140px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 40px;
+    border-radius: 5px;
+    background: #373737;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: space-around;
+    position: relative;
+    top: 10px;
+    bottom: 30px;
+}
+
+.toggleDiagramTypeInput{
+    display: none;
+}
+.toggleDiagramTypeLabel:before{
+    content: "";
+    background-color: black;
+    position: absolute;
+    width: 65px;
+    height: 30px;
+    top: 5px;
+    left: 5px;
+    transition: 0.2s;
+    border-radius: 10px;
+
+
+}
+.toggleDiagramTypeSpan{
+    color: white;
+    z-index: 1;
+}
+
+.toggleDiagramTypeInput:checked + .toggleDiagramTypeLabel:before{
+    transform:translateX(65px);
+}
+.searchInput{
+    border-radius: 10px;
+    width: 25%;
+    height: 40px;
+    padding: 0;
+    border: 1px solid black;
+    margin-bottom: 10px;
+    background-color: #393939;
+    color: white;
+    transition: 0.3s ease;
+}
+.searchInput:focus{
+    outline: none;
+    box-shadow: 0 0 5px #8884d8;
 }
