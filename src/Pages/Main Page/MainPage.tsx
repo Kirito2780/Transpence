@@ -129,9 +129,6 @@ const MainPage = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-  useEffect(() => {
-    console.log(itemData);
-  }, [itemData]);
   return (
     <div>
       <Modal open={modal}>

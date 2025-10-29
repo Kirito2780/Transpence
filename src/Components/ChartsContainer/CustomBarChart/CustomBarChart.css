@@ -1,0 +1,6 @@
+.CustomBarChartWrapper{
+    width: 100%;
+    overflow-x: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #000000 transparent;
+}

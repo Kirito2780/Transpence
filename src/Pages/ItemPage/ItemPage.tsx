@@ -2,9 +2,18 @@ import "./ItemPage.css";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import type { IItemData } from "../Main Page/MainPage.tsx";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
+
+interface IItemData {
+  id: number;
+  title: string;
+  date: string;
+  operation_type: string;
+  tag: string;
+  amount: number;
+  svg: string;
+}
 
 const ItemPage = () => {
   const { id } = useParams();
@@ -13,16 +22,17 @@ const ItemPage = () => {
 
   useEffect(() => {
     if (!id || !token) return;
-    console.log(id);
 
     axios
-      .get(`http://172.30.88.250:8000/operations/${id}/`, {
+      .get<IItemData>(`http://172.30.88.250:8000/operations/${id}/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${token}`,
         },
       })
-      .then((res) => setData(res.data));
+      .then((res) => {
+        setData(res.data);
+      });
   }, [token, id]);
 
   return (
