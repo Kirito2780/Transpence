@@ -12,6 +12,7 @@ import ChartsContainer from "../../Components/ChartsContainer/ChartsContainer.ts
 import { ChartSwitcher } from "../../Components/ChartSwitcher/ChartSwitcher.tsx";
 import { Calendar } from "../../Components/Calendar/Calendar.tsx";
 import ChartTypeSwitcher from "../../Components/ChartTypeSwitcher/ChartTypeSwitcher.tsx";
+import Pagination from "../../Components/Pagination/Pagination";
 
 export interface IChartsData {
   operation_type: string;
@@ -42,6 +43,8 @@ export interface ITagsDiagram {
 const MainPage = () => {
   const [chartData, setChartData] = useState<IChartsData[]>([]);
   const [itemData, setItemData] = useState<IItemData[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const OperationsPerPage: number = 5;
   const [barChartData, setBarChartData] = useState<IBarChartData[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
@@ -58,6 +61,8 @@ const MainPage = () => {
   const [modal, setModal] = useState<boolean>(false);
   const [tagsDiagram, setTagsDiagram] = useState<ITagsDiagram[]>([]);
   const [changeDiagram, setChangeDiagram] = useState<boolean>(false);
+  const [userName, setUserName] = useState<string>("");
+  const [profileMenu, setProfileMenu] = useState<boolean>(false);
   const filterItems = useMemo(
     () =>
       itemData.filter((item) =>
@@ -94,6 +99,16 @@ const MainPage = () => {
       })
       .catch((error) => console.log(`Error:${error}`));
   };
+  const PaginatedItemData = useMemo(() => {
+    return itemData.slice(
+      (page - 1) * OperationsPerPage,
+      page * OperationsPerPage,
+    );
+  }, [page, itemData]);
+
+  const PagesLength = useMemo(() => {
+    return Math.ceil(itemData.length / OperationsPerPage);
+  }, [itemData]);
 
   useEffect(() => {
     const startFormatted = date_start?.toISOString().slice(0, 10);
@@ -129,6 +144,42 @@ const MainPage = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://172.30.88.250:8000/auth/users/me/", {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => setUserName(res.data.username))
+      .catch((err) => console.log(err));
+  }, [token]);
+
+  const LogOut = async () => {
+    if (!token) return;
+
+    try {
+      await axios
+        .post(
+          "http://172.30.88.250:8000/auth/token/logout/",
+          {},
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        )
+        .catch((err) => console.log(err));
+
+      localStorage.removeItem("token");
+      location.reload();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div>
       <Modal open={modal}>
@@ -162,8 +213,8 @@ const MainPage = () => {
         <h2 className={"datePickerTags"}>Select Tags</h2>
         <div className={"categoryWrapper"}>
           {categories.length > 0 &&
-            categories.map((category, index) => (
-              <div className={"categoryItemWrapper"} key={index}>
+            categories.map((category) => (
+              <div className={"categoryItemWrapper"} key={category}>
                 <label>{category}</label>
                 <input
                   type="checkbox"
@@ -192,7 +243,71 @@ const MainPage = () => {
           <span className={"MainTitleSecond"}>pence</span>
         </h1>
 
-        <h2 className={"SecondTitle"}>Profile</h2>
+        <div>
+          <h2
+            onClick={() => setProfileMenu((prev) => !prev)}
+            className={"SecondTitle"}
+          >
+            {userName}
+          </h2>
+          <div
+            className={
+              profileMenu ? "profile-menu-showed" : "profile-menu-hidden"
+            }
+          >
+            <div className={"profile-menu-item-wrapper"}>
+              <div className="profile-menu-item">
+                <svg
+                  className={"profile-menu-svg"}
+                  width="30px"
+                  height="30px"
+                  viewBox="0 0 20 20"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs></defs>
+                  <g
+                    id="Page-1"
+                    stroke="none"
+                    strokeWidth="1"
+                    fill="none"
+                    fillRule="evenodd"
+                  >
+                    <g
+                      id="Dribbble-Light-Preview"
+                      transform="translate(-420.000000, -2159.000000)"
+                      fill="#000000"
+                    >
+                      <g
+                        id="icons"
+                        transform="translate(56.000000, 160.000000)"
+                      >
+                        <path
+                          d="M374,2009 C371.794,2009 370,2007.206 370,2005 C370,2002.794 371.794,2001 374,2001 C376.206,2001 378,2002.794 378,2005 C378,2007.206 376.206,2009 374,2009 M377.758,2009.673 C379.124,2008.574 380,2006.89 380,2005 C380,2001.686 377.314,1999 374,1999 C370.686,1999 368,2001.686 368,2005 C368,2006.89 368.876,2008.574 370.242,2009.673 C366.583,2011.048 364,2014.445 364,2019 L366,2019 C366,2014 369.589,2011 374,2011 C378.411,2011 382,2014 382,2019 L384,2019 C384,2014.445 381.417,2011.048 377.758,2009.673"
+                          id="profile-[#1335]"
+                        ></path>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                <p className={"profile-menu-item-profile"}>Profile</p>
+              </div>
+              <div className="profile-menu-item" onClick={LogOut}>
+                <svg
+                  className={"profile-menu-svg-cross"}
+                  fill="#000000"
+                  width="30px"
+                  height="30px"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M18.8,16l5.5-5.5c0.8-0.8,0.8-2,0-2.8l0,0C24,7.3,23.5,7,23,7c-0.5,0-1,0.2-1.4,0.6L16,13.2l-5.5-5.5  c-0.8-0.8-2.1-0.8-2.8,0C7.3,8,7,8.5,7,9.1s0.2,1,0.6,1.4l5.5,5.5l-5.5,5.5C7.3,21.9,7,22.4,7,23c0,0.5,0.2,1,0.6,1.4  C8,24.8,8.5,25,9,25c0.5,0,1-0.2,1.4-0.6l5.5-5.5l5.5,5.5c0.8,0.8,2.1,0.8,2.8,0c0.8-0.8,0.8-2.1,0-2.8L18.8,16z" />
+                </svg>
+                <p>Log out</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </header>
       <main className={"MainContent"}>
         <Calendar onStateChange={handleModal} />
@@ -229,9 +344,9 @@ const MainPage = () => {
               {!itemData ? (
                 <h2>Loading...</h2>
               ) : search.length == 0 ? (
-                itemData.map((item, i) => (
+                PaginatedItemData.map((item) => (
                   <InfoItem
-                    key={i}
+                    key={item.id}
                     id={item.id}
                     tags={item.tags}
                     svg={item.svg}
@@ -244,9 +359,9 @@ const MainPage = () => {
               ) : filterItems.length == 0 ? (
                 <h2>no suggestion</h2>
               ) : (
-                filterItems.map((item, i) => (
+                filterItems.map((item) => (
                   <InfoItem
-                    key={i}
+                    key={item.id}
                     id={item.id}
                     tags={item.tags}
                     svg={item.svg}
@@ -261,6 +376,14 @@ const MainPage = () => {
           ) : (
             <h2 className={"NoData"}>No available data to Show</h2>
           )}
+
+          {itemData.length > 0 ? (
+            <Pagination
+              currentPage={page}
+              setCurrentPage={setPage}
+              pagesLength={PagesLength}
+            />
+          ) : null}
         </section>
       </main>
     </div>

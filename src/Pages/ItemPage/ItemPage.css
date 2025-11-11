@@ -13,19 +13,27 @@
 }
 .ItemPageTitle{
     text-align: center;
-    font-size: 5rem;
+    font-size: 6rem;
+}
+.ItemTitle{
+    text-align: center;
+    font-size: 4rem;
 }
 .ItemPageFirstSection{
     width: 100%;
-    height: 200px;
+    height: fit-content;
     border-radius: 10px;
     background: #5c5c5c;
-    margin-top: 50px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: 1s;
 
+}
+.ItemPageFirstSection:hover{
+    transform: scale(1.1);
 }
 .ItemPageSecondSection{
     width: 100%;
@@ -33,10 +41,19 @@
     border-radius: 10px;
     background: #5c5c5c;
     margin-top: 50px;
+    transition: 1s;
+}
+.ItemPageSecondSection:hover{
+    transform: scale(1.1);
 }
 .ItemPageSVG{
     width: 120px;
     height: 120px;
+    border-radius: 50%;
+    transition: 0.5s;
+}
+.ItemPageSVG:hover{
+    background-color: #5c5c5c;
 }
 .ItemPageIncome{
     font-size: 40px;
@@ -67,4 +84,14 @@
     background: #5c5c5c;
     margin-top: 50px;
 
+    transition: 1s;
+
+}
+.ItemPageThirdSection:hover{
+    transform: scale(1.1);
+}
+.BackToMain{
+    position: absolute;
+    top: 20px;
+    left: 400px;
 }

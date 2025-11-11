@@ -1,5 +1,5 @@
 import "./ItemPage.css";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -37,18 +37,36 @@ const ItemPage = () => {
 
   return (
     <div className="ItemPageContainer">
+      <NavLink to={"/"} className={"BackToMain"}>
+        <svg
+          width="30px"
+          height="30px"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5 12H19M5 12L11 6M5 12L11 18"
+            stroke="#000000"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </NavLink>
       {data && (
         <>
           <h1 className={"ItemPageTitle"}>
             <span className={"MainTitleFirst"}>Trans</span>
             <span className={"MainTitleSecond"}>pence</span>
           </h1>
+          <div
+            dangerouslySetInnerHTML={{ __html: data.svg }}
+            className={"ItemPageSVG"}
+          ></div>
           <section className={"ItemPageFirstSection"}>
-            <div
-              dangerouslySetInnerHTML={{ __html: data.svg }}
-              className={"ItemPageSVG"}
-            ></div>
-            <h2
+            <h2 className={"ItemTitle"}>{data.title}</h2>
+            <h6
               className={
                 data.operation_type == "income"
                   ? "ItemPageIncome"
@@ -57,7 +75,7 @@ const ItemPage = () => {
             >
               {data.operation_type == "income" ? <span>+</span> : null}
               {data.amount}
-            </h2>
+            </h6>
             <p>{data.date}</p>
           </section>
           <section className={"ItemPageSecondSection"}>

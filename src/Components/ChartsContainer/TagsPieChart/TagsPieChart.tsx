@@ -1,4 +1,5 @@
-import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
+//import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
+import { PieChart, pieArcLabelClasses } from "@mui/x-charts";
 import { type JSX } from "react";
 import type { ITagsDiagram } from "../../../Pages/Main Page/MainPage.tsx";
 
@@ -8,57 +9,47 @@ interface ITagsPieChartProps {
   color: string[];
 }
 const TagsPieChart = ({ data, color }: ITagsPieChartProps): JSX.Element => {
-  console.log("Render TagsPieChart");
-  const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }: any) => {
-    const radius: number = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x: number = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-    const y: number = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="black"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${((percent ?? 1) * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
+  const totalSum = data.reduce((sum, item) => sum + item.total_amount, 0);
+
+  const chartData = data.map((item, index) => ({
+    id: index,
+    value: item.total_amount,
+    label: String(item.tags),
+    color: color[index % color.length],
+    rawValue: item.total_amount,
+    percent: Math.round((item.total_amount / totalSum) * 100 * 100) / 100,
+  }));
 
   return (
-    <PieChart width={500} height={500}>
-      <Pie
-        data={data}
-        cx={"50%"}
-        cy={"50%"}
-        outerRadius={200}
-        stroke="whitesmoke"
-        dataKey={"total_amount"}
-        nameKey={"tags"}
-        label={renderCustomizedLabel}
-        labelLine={false}
-        isAnimationActive={true}
-      >
-        {data.map((entry: ITagsDiagram, index: number) => (
-          <Cell
-            key={`cell-${entry.tags}`}
-            fill={color[index % color.length]}
-            style={{ transition: "0.3s ease" }}
-          ></Cell>
-        ))}
-      </Pie>
-      <Tooltip />
-      <Legend />
-    </PieChart>
+    <div className="CustomPieChartWrapper">
+      <PieChart
+        series={[
+          {
+            data: chartData,
+            highlightScope: { fade: "global", highlight: "item" },
+            faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+            valueFormatter: (d) => `${d.value.toLocaleString()}`,
+            arcLabelRadius: "60%",
+            arcLabel: (d) => {
+              const percent = (d.value / totalSum) * 100;
+              if (percent >= 4) {
+                return `${percent.toFixed(0)}%`;
+              }
+              return "";
+            },
+          },
+        ]}
+        height={470}
+        width={500}
+        sx={{
+          [`& .${pieArcLabelClasses.root}`]: {
+            fill: "white",
+            fontSize: 14,
+            fontWeight: 600,
+          },
+        }}
+      />
+    </div>
   );
 };
 export default TagsPieChart;

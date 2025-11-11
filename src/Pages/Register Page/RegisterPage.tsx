@@ -1,8 +1,8 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import "./RegisterPage.css";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface IForm {
@@ -34,11 +34,8 @@ const RegisterPage = () => {
   const [response, setResponse] = useState<ISuccess | null>(null);
   const [file, setFile] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(file);
-  }, [file]);
+  const navigate = useNavigate();
 
   const onRegister: SubmitHandler<IForm> = async (data) => {
     try {
@@ -74,13 +71,19 @@ const RegisterPage = () => {
           navigate("/regilog");
         } else {
           alert(`failed ${response}`);
+          reset();
         }
       } else {
         null;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log("error", err);
-      alert("Something went wrong. Please try again");
+      if (err.response && err.response.data) {
+        const errors = Object.values(err.response.data).flat();
+        alert(errors.join("\n"));
+      } else {
+        alert("Unexpected error");
+      }
     }
   };
   const nextForm = async () => {
@@ -177,13 +180,21 @@ const RegisterPage = () => {
       </div>
     </>,
     <div>
-      <button
-        type={"button"}
-        onClick={backForm}
-        className={"RegisterButtonBack"}
-      >
-        back
-      </button>
+      <div className={"RegisterFAQ"}>
+        <button
+          type={"button"}
+          onClick={backForm}
+          className={"RegisterButtonBack"}
+        >
+          back
+        </button>
+        <Link
+          to={"http://172.30.88.250:8000/download_example/"}
+          className={"FAQ"}
+        >
+          ?
+        </Link>
+      </div>
       <div className={"fileUploader"}>
         <label className={"customFileUpload"} htmlFor={"fileUpload"}>
           {file ? <span>File uploaded</span> : <span>Choose file</span>}
