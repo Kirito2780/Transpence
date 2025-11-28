@@ -1,0 +1,394 @@
+
+.ProfileContainer{
+    padding: 20px 80px 0 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+}
+.ProfileTop{
+    display: flex;
+    justify-content: space-between;
+    height: 70%;
+    width: 100%;
+    gap: 3%;
+}
+.ProfileBottom{
+    height: 30%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition: 0.3s;
+}
+.ProfileSection{
+    border-radius: 10px;
+    width: 33.3%;
+    height: 50vh;
+    background-color: #5c5c5c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.3s;
+}
+.ProfileSection:hover ,.CertificatesSection:hover,.SummaryStatsSection:hover{
+    filter: drop-shadow(0 0 2em #cdcdcd);
+}
+.ProfileBottom:hover{
+    filter: drop-shadow(0 0 2em #6e63ff);
+}
+.CertificatesSection{
+    border-radius: 10px;
+    width: 33.3%;
+    height: 50vh;
+    background-color: #5c5c5c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    transition: 0.3s;
+}
+
+.SummaryStatsSection{
+    border-radius: 10px;
+    width: 33.3%;
+    height: 50vh;
+    background-color: #5c5c5c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.3s;
+}
+.SpendingSection{
+    border-radius: 10px;
+    width: 100%;
+    height: 35vh;
+    background-color: #5c5c5c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.3s;
+    padding: 10px;
+}
+.nav-link{
+    text-decoration: none;
+}
+.ProfileSection{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.ProfileBio{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+.ProfileNickname{
+    font-size: 70px;
+}
+.ProfileEmail{
+    font-size: 22px;
+    color: rgba(0,0,0,0.8);
+    position: relative;
+    display: inline-block;
+}
+.ProfileEmail:after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 10px;
+    width: 100px;
+    background: black;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+.ProfileEmail:hover{
+    transform: scaleX(1);
+}
+
+.ProfileButtons{
+    height: 30%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.ProfileButton,.ProfileButtonDelete{
+    height: 40px;
+    width: 100px;
+    background-color: #333333;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    transition: 0.3s ease;
+}
+.ProfileButtonDelete:hover{
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.5);
+    box-shadow: 0 0 15px #ff113c;
+}
+.ProfileButton:hover{
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.5);
+    box-shadow: 0 0 15px #b8b8b8;
+}
+.ChangeInputs {
+    height: 30px;
+    width: 80%;
+    background-color: transparent;
+    color: white;
+    font-size: 25px;
+    border: none;
+    border-bottom: 2px solid black;
+    margin-bottom: 10px;
+    border-radius: 10px 10px 0 0;
+}
+.ChangeInputsDelete{
+    height: 30px;
+    width: 80%;
+    background-color: transparent;
+    color: white;
+    font-size: 25px;
+    border: none;
+    border-bottom: 2px solid black;
+    margin-top: 50px;
+    border-radius: 10px 10px 0 0;
+
+}
+
+.ChangeInputsDelete:focus{
+    outline: none;
+}
+.ChangeInputs:focus{
+    outline: none;
+}
+.ChangeInputsWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.deleteHeader{
+    font-size: 50px;
+}
+.ProfileButtonDeleteDisabled{
+    height: 40px;
+    width: 100px;
+    background-color: #333333;
+    border: none;
+    border-radius: 10px;
+    color: gray;
+    transition: 0.3s ease;
+}
+.ProfileButtonDeleteDisabled:hover{
+    cursor: not-allowed;
+}
+.ProfileStats{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.ProfileStatsHeader{
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+.ProfileStatsItems{
+display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    height: 80%;
+
+}
+.ProfileStatsItem{
+    color: #fae6c9;
+    font-size: 25px;
+    border-radius: 10px;
+    width: 90%;
+    background-color: #494949;
+    transition: 0.3s;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+.ProfileStatsItem:hover{
+    transform: scale(1.1);
+}
+.ProfileFilesWrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.ProfileFilesHeader{
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 26px;
+    margin-top: 15px;
+}
+.ProfileFilesItems{
+    display: flex;
+    flex-direction: column;
+    height: 30%;
+    width: 100%;
+    overflow-x: scroll;
+    padding-left: 5%;
+    padding-right: 5%;
+    gap: 20px;
+}
+.FileSectionItem{
+    color: #fae6c9;
+    border-radius: 10px;
+    background-color: #494949;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+.FileSectionItem:hover{
+    color: white;
+    cursor: pointer;
+}
+.FileSectionItemClicked{
+    color: gray;
+    border-radius: 10px;
+    background-color: #494949;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+.FileSectionItemClicked{
+    cursor: pointer;
+}
+.ProfileFilesItemsButtons{
+    margin-top: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+}
+.ProfileFilesButtons{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+.ProfileButtonFiles{
+    background-color: #494949;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    padding: 10px;
+    font-size:10px;
+    height: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:70px;
+}
+.ProfileButtonFiles:hover{
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.5);
+}
+.ModalCloseWrapper{
+    width: 100%;
+    display: flex;
+    justify-content: right;
+}
+.ModalClose{
+    border-radius: 50%;
+    background-color: #494949;
+    color: white;
+    height: 20px;
+    width: 20px;
+    border: none;
+}
+.ModalHeader{
+    text-align: center;
+    font-size: 40px;
+}
+.ProfilePageForm{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+}
+.ProfilePageFile{
+
+    width: 80%;
+    height: 50%;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 4px;
+}
+.ProfilePageFile:hover {
+    background-color: darkgray;
+}
+.ModalDone{
+    background-color: #494949;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 10%;
+    height: 30px;
+    transition: 0.3s;
+}
+.ModalDone:hover{
+    background-color: #707070;
+}
+.ProfileStatsItemDiv{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+.ProfileStatsBigItem{
+
+    color: #fae6c9;
+    font-size: 20px;
+    border-radius: 10px;
+    width: 90%;
+    background-color: #494949;
+    transition: 0.3s;
+    padding: 5px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.ProfileStatsBigItem:hover{
+    transform: scale(1.1);
+}
+.ProfileFilesNoDataButtonWrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.SpendingSectionBackground{
+    height: 100%;
+    background-color: #1c1c1c;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+}

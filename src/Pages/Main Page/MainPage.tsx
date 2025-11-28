@@ -13,6 +13,7 @@ import { ChartSwitcher } from "../../Components/ChartSwitcher/ChartSwitcher.tsx"
 import { Calendar } from "../../Components/Calendar/Calendar.tsx";
 import ChartTypeSwitcher from "../../Components/ChartTypeSwitcher/ChartTypeSwitcher.tsx";
 import Pagination from "../../Components/Pagination/Pagination";
+import { NavLink } from "react-router-dom";
 
 export interface IChartsData {
   operation_type: string;
@@ -256,7 +257,7 @@ const MainPage = () => {
             }
           >
             <div className={"profile-menu-item-wrapper"}>
-              <div className="profile-menu-item">
+              <NavLink to={"/profile"} className="profile-menu-item">
                 <svg
                   className={"profile-menu-svg"}
                   width="30px"
@@ -290,8 +291,8 @@ const MainPage = () => {
                     </g>
                   </g>
                 </svg>
-                <p className={"profile-menu-item-profile"}>Profile</p>
-              </div>
+                <div className={"profile-menu-item-profile"}>Profile</div>
+              </NavLink>
               <div className="profile-menu-item" onClick={LogOut}>
                 <svg
                   className={"profile-menu-svg-cross"}

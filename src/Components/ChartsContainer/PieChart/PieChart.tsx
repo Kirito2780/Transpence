@@ -31,7 +31,7 @@ const CustomPieChart = ({ data, color }: IPieChartProps): JSX.Element => {
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
             valueFormatter: (d) => `${d.value.toLocaleString()}`,
             arcLabel: (d) => {
-              const percent = ((d.value / totalSum) * 100).toFixed(2);
+              const percent = ((d.value / totalSum) * 100).toFixed(0);
               return `${percent}%`;
             },
           },

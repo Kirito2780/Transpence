@@ -5,9 +5,16 @@
     color: #b6b6b6;
     width: fit-content;
     border-radius: 0 0 15px 0 ;
+    padding:10px;
+
+
 }
 .MainTitleFirst{
     color: #202020;
+}
+.MainTitleSecond{
+
+    color: #b6b6b6;
 }
 .SecondTitle{
     margin-right: 10px;
@@ -269,7 +276,7 @@
     border-radius: 10px;
     width: 25%;
     height: 40px;
-    padding: 0;
+    padding: 10px;
     border: 1px solid black;
     margin-bottom: 10px;
     background-color: #393939;
@@ -305,6 +312,8 @@
     justify-content: center;
     width: 100%;
     height: 50%;
+    text-decoration: none;
+    color: black;
 }
 .profile-menu-item:hover{
     color:white;
@@ -333,6 +342,7 @@
 .profile-menu-item-profile{
     margin-right: 9px;
 }
+
 .PagiButtons,.PagiButtonsArrowLeft,.PagiButtonsArrowRight{
     background-color: #4e4e4e;
     color: white;

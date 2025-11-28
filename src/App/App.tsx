@@ -9,10 +9,11 @@ import type { RootState } from "../Store/Store.tsx";
 import { useEffect, useState } from "react";
 import { setToken } from "../Slices/authSlice.tsx";
 import ItemPage from "../Pages/ItemPage/ItemPage.tsx";
+import ProfilePage from "../Pages/ProfilePage/ProfilePage.tsx";
 
 function App() {
   const token = useSelector((state: RootState) => state.AuthSlice.token);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,7 +24,7 @@ function App() {
     }
 
     setLoading(false);
-  }, [token, dispatch]);
+  }, []);
 
   if (loading) {
     return <h1 className={"loading"}>Loading......................</h1>;
@@ -42,6 +43,7 @@ function App() {
         ) : (
           <>
             <Route path={"/"} element={<MainPage />} />
+            <Route path={"/profile"} element={<ProfilePage />} />
             <Route path={"/operations/:id"} element={<ItemPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
