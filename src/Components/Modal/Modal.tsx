@@ -1,5 +1,6 @@
 import { createPortal } from "react-dom";
 import "./Modal.css";
+import { motion } from "framer-motion";
 import { useEffect, useRef, type ReactNode } from "react";
 
 type ModalProps = {
@@ -20,11 +21,21 @@ const Modal = ({ children, open }: ModalProps) => {
     }
   }, [open]);
 
+  const variants = {
+    active: { height: "500px", width: "500px", opacity: 1 },
+    inactive: { height: "0", width: "0", opacity: 0 },
+  };
+
   return createPortal(
     <div className={open ? "ModalBackground" : ""}>
-      <dialog ref={dialog} className="Modal">
+      <motion.dialog
+        variants={variants}
+        animate={open ? "active" : "inactive"}
+        ref={dialog}
+        className="Modal"
+      >
         {children}
-      </dialog>
+      </motion.dialog>
     </div>,
     document.getElementById("modal") as HTMLElement,
   );

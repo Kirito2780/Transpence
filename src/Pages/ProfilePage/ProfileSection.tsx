@@ -13,7 +13,13 @@ interface ProfileSection {
   username: string;
 }
 
-const ProfilePage = () => {
+interface ProfileSectionProps {
+  setError: (value: boolean) => void;
+  setTextMessage: (m: string) => void;
+  setMessage: (message: boolean) => void;
+}
+
+const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userData, setUserData] = useState<ProfileSection | null>(null);
@@ -25,6 +31,7 @@ const ProfilePage = () => {
   const [email, setEmail] = useState<string>("");
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
+  const [fetching, setFetching] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
 
   useEffect(() => {
@@ -43,7 +50,7 @@ const ProfilePage = () => {
         setOldUsername(res.data.username);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [fetching]);
 
   const changeInputs = [
     <input
@@ -83,6 +90,7 @@ const ProfilePage = () => {
   };
 
   const handleChanges = () => {
+    setFetching(true);
     console.log(oldEmail);
     console.log(username);
     if (oldUsername != username) {
@@ -101,12 +109,21 @@ const ProfilePage = () => {
           },
         )
         .then((res) => {
+          setFetching(false);
           setUsername(res.data.new_username);
           setOldUsername(res.data.new_username);
+          props.setMessage(true);
+          props.setTextMessage(res.data.detail);
           console.log(res.data);
+          props.setError(false);
         })
         .catch((err) => {
           console.log(err);
+
+          props.setMessage(true);
+          props.setTextMessage(err.message);
+          props.setError(true);
+          props.setMessage(true);
         });
     }
     if (oldEmail != email) {
@@ -127,11 +144,18 @@ const ProfilePage = () => {
         .then((res) => {
           setEmail(res.data.email);
           setOldEmail(res.data.email);
-
+          props.setMessage(true);
+          props.setTextMessage(res.data.detail);
           console.log(res.data);
+          props.setError(false);
+          setFetching(false);
         })
         .catch((err) => {
           console.log(err);
+
+          props.setMessage(true);
+          props.setTextMessage(err.message);
+          props.setError(true);
         });
     }
     if (
@@ -154,8 +178,17 @@ const ProfilePage = () => {
             },
           },
         )
+        .then(() => {
+          props.setMessage(true);
+          setFetching(false);
+          props.setError(false);
+        })
         .catch((err) => {
           console.log(err);
+
+          props.setMessage(true);
+          props.setTextMessage(err.message);
+          props.setError(true);
         });
     }
 

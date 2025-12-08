@@ -2,7 +2,7 @@ import "./MainPage.css";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import type { RootState } from "../../Store/Store.tsx";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import InfoItem from "../../Components/InfoItem/InfoItem.tsx";
 import { motion } from "framer-motion";
 import DatePicker from "react-datepicker";
@@ -14,6 +14,7 @@ import { Calendar } from "../../Components/Calendar/Calendar.tsx";
 import ChartTypeSwitcher from "../../Components/ChartTypeSwitcher/ChartTypeSwitcher.tsx";
 import Pagination from "../../Components/Pagination/Pagination";
 import { NavLink } from "react-router-dom";
+import { setFirstDay } from "../../Slices/dateSlice.tsx";
 
 export interface IChartsData {
   operation_type: string;
@@ -49,12 +50,12 @@ const MainPage = () => {
   const [barChartData, setBarChartData] = useState<IBarChartData[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
+  const reduxDate = useSelector((state: RootState) => state.DateSlice.firstDay);
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
-  const firstDay = new Date(year, month - 1, 0);
   const lastDay = new Date(year, month + 1, 0);
-  const [date_start, setDate_start] = useState<null | Date>(firstDay);
+  const [date_start, setDate_start] = useState<null | Date>(null);
   const [date_end, setDate_end] = useState<null | Date>(lastDay);
   const [categories, setCategories] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -63,6 +64,8 @@ const MainPage = () => {
   const [tagsDiagram, setTagsDiagram] = useState<ITagsDiagram[]>([]);
   const [changeDiagram, setChangeDiagram] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("");
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(true);
+  const dispatch = useDispatch();
   const [profileMenu, setProfileMenu] = useState<boolean>(false);
   const filterItems = useMemo(
     () =>
@@ -74,8 +77,19 @@ const MainPage = () => {
   const handleModal: (value: boolean) => void = () => {
     setModal(true);
   };
+  useEffect(() => {
+    console.log(date_start);
+    console.log(date_end);
+  }, [date_start, date_end]);
+
+  useEffect(() => {
+    if (date_end != null && date_start != null && isConfirmed) {
+      sendTimeinterval();
+    }
+  }, [date_end, date_start, isConfirmed]);
 
   const sendTimeinterval = () => {
+    if (!date_start || !date_end) return;
     const startFormatted = date_start?.toISOString().slice(0, 10);
     const endFormatted = date_end?.toISOString().slice(0, 10);
 
@@ -95,7 +109,7 @@ const MainPage = () => {
         setChartData(res.data.total);
         setBarChartData(res.data.date_detail);
         setTagsDiagram(res.data.tags_detail);
-
+        setIsConfirmed(false);
         setItemData(res.data.details);
       })
       .catch((error) => console.log(`Error:${error}`));
@@ -105,36 +119,25 @@ const MainPage = () => {
       (page - 1) * OperationsPerPage,
       page * OperationsPerPage,
     );
-  }, [page, itemData]);
+  }, [page, itemData, date_start, date_end]);
 
   const PagesLength = useMemo(() => {
     return Math.ceil(itemData.length / OperationsPerPage);
   }, [itemData]);
 
   useEffect(() => {
-    const startFormatted = date_start?.toISOString().slice(0, 10);
-    const endFormatted = date_end?.toISOString().slice(0, 10);
+    const browserDateRaw = sessionStorage.getItem("date_start");
+    const browserDateReady = browserDateRaw ? new Date(browserDateRaw) : null;
 
-    const data = {
-      date_start: startFormatted,
-      date_end: endFormatted,
-      tags: catArr,
-    };
-
-    axios
-      .post("http://172.30.88.250:8000/graph/", data, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setChartData(res.data.total);
-        setBarChartData(res.data.date_detail);
-        setItemData(res.data.details);
-        setTagsDiagram(res.data.tags_detail);
-      })
-      .catch((error) => console.log(`Error:${error}`));
+    if (reduxDate != null) {
+      const localDate = new Date(reduxDate);
+      setDate_start(localDate);
+    } else if (browserDateReady != null) {
+      setDate_start(browserDateReady);
+    } else {
+      const baseDate = new Date(year, month, 1);
+      setDate_start(baseDate);
+    }
   }, [token]);
 
   useEffect(() => {
@@ -181,6 +184,7 @@ const MainPage = () => {
       console.log(err);
     }
   };
+
   return (
     <div>
       <Modal open={modal}>
@@ -197,7 +201,13 @@ const MainPage = () => {
           <label className={"datePickerLabel"}>from</label>
           <DatePicker
             selected={date_start}
-            onChange={(date) => setDate_start(date)}
+            onChange={(date) => {
+              setDate_start(date);
+              dispatch(setFirstDay(date?.toISOString()));
+              date
+                ? sessionStorage.setItem("date_start", date.toISOString())
+                : null;
+            }}
             dateFormat={"yyyy-MM-dd"}
             className={"myDateInput"}
             portalId="start-date-portal"
@@ -233,7 +243,14 @@ const MainPage = () => {
             ))}
         </div>
         <div className={"datePickerButtonWrapper"}>
-          <button className={"datePickerButton"} onClick={sendTimeinterval}>
+          <button
+            className={"datePickerButton"}
+            onClick={() => {
+              sendTimeinterval();
+              setModal(false);
+              setIsConfirmed(true);
+            }}
+          >
             set time interval
           </button>
         </div>

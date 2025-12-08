@@ -4,12 +4,13 @@ import StatsSection from "./StatsSection.tsx";
 import FilesSection from "./FilesSection.tsx";
 import ChartSection from "./ChartSection.tsx";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../Components/Modal/Modal.tsx";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
+import { Message } from "../../Components/Message/Message.tsx";
 
 interface IProfilePageForm {
   file?: FileList;
@@ -24,6 +25,9 @@ const ProfilePage = () => {
   const [file, setFile] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [handleChanges, setChanges] = useState<boolean>(false);
+  const [message, setMessage] = useState<boolean>(false);
+  const [messageText, setMessageText] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
 
   const handleAddFile: SubmitHandler<IProfilePageForm> = async (data) => {
     try {
@@ -43,17 +47,31 @@ const ProfilePage = () => {
         },
       );
       const response = request.data;
+      setMessageText(response.message);
       setLoading(false);
+      setMessage(true);
       setModal(false);
       setFile(false);
       console.log(response);
     } catch (e) {
       console.log(e);
+      setError(true);
     }
   };
 
+  useEffect(() => {
+    if (message) {
+      setTimeout(() => {
+        setMessage(false);
+      }, 4000);
+    }
+  }, [message]);
+
   return (
     <div>
+      <Message error={error} setOpen={setMessage} open={message}>
+        {messageText}
+      </Message>
       <Modal open={modal}>
         <div className={"ModalCloseWrapper"}>
           <button className={"ModalClose"} onClick={() => setModal(false)}>
@@ -95,12 +113,19 @@ const ProfilePage = () => {
       </header>
       <main className={"ProfileContainer"}>
         <div className={"ProfileTop"}>
-          <ProfileSection />
+          <ProfileSection
+            setMessage={setMessage}
+            setTextMessage={setMessageText}
+            setError={setError}
+          />
           <StatsSection modal={modal} changes={handleChanges} />
           <FilesSection
             modal={modal}
             setModal={setModal}
             setNewChanges={setChanges}
+            setMessage={setMessage}
+            setTextMessage={setMessageText}
+            setError={setError}
           />
         </div>
         <div className={"ProfileBottom"}>

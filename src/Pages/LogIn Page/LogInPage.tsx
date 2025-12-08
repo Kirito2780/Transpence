@@ -16,6 +16,7 @@ interface IForm {
 
 const LoginPage = () => {
   const [click, setClick] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ const LoginPage = () => {
       setLoading(true);
     } catch (error) {
       console.error(error);
-      alert("wrong username or password");
+      setError(true);
     }
   };
   if (loading) {
@@ -173,6 +174,11 @@ const LoginPage = () => {
                   )}
                 </button>
               </div>
+              {error ? (
+                <span className={"LogInErrorPasswordMessage"}>
+                  wrong username or password
+                </span>
+              ) : null}
             </div>
             <div className={"LogInButtonWrapper"}>
               <button className={"LogInButton"} type={"submit"}>

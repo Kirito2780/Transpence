@@ -20,12 +20,19 @@ interface FileSectionPropsJSX {
   modal: boolean;
   setNewChanges: React.Dispatch<React.SetStateAction<boolean>>;
   setModal: (arg: boolean) => void;
+
+  setError: (value: boolean) => void;
+  setTextMessage: (m: string) => void;
+  setMessage: (message: boolean) => void;
 }
 
 const FilesSection = ({
   setNewChanges,
   setModal,
   modal,
+  setError,
+  setMessage,
+  setTextMessage,
 }: FileSectionPropsJSX) => {
   const token = useSelector((state: RootState) => state.AuthSlice.token);
   const [deleteFile, setDeleteFile] = useState<boolean>(false);
@@ -73,10 +80,16 @@ const FilesSection = ({
         console.log(res);
         setNewChanges((prev) => !prev);
         setSelectedFile([]);
+        setError(false);
         Fetch();
+        setMessage(true);
+        setTextMessage(res.data.message);
       })
       .catch((err) => {
         console.log(err);
+        setMessage(true);
+        setError(true);
+        setTextMessage(err.message);
       });
     setDeleteFile(false);
   };

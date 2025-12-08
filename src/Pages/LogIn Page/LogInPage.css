@@ -79,4 +79,8 @@
 .BackToRegiLog:hover{
     background-color: rgba(0, 0, 0, 0.3);
 }
-
+.LogInErrorPasswordMessage{
+    color: darkred;
+    position: absolute;
+    top: 54%;
+}
