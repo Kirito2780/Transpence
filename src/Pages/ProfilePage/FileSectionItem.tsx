@@ -1,4 +1,5 @@
 import type { Files } from "./FilesSection.tsx";
+import React from "react";
 
 interface FilesItemProps {
   data: Files;
@@ -28,4 +29,4 @@ const FileSectionItem = ({ data, setSelected, selected }: FilesItemProps) => {
   );
 };
 
-export default FileSectionItem;
+export default React.memo(FileSectionItem);

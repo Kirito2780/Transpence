@@ -15,6 +15,7 @@ import ChartTypeSwitcher from "../../Components/ChartTypeSwitcher/ChartTypeSwitc
 import Pagination from "../../Components/Pagination/Pagination";
 import { NavLink } from "react-router-dom";
 import { setFirstDay } from "../../Slices/dateSlice.tsx";
+import { Message } from "../../Components/Message/Message.tsx";
 
 export interface IChartsData {
   operation_type: string;
@@ -67,6 +68,7 @@ const MainPage = () => {
   const [isConfirmed, setIsConfirmed] = useState<boolean>(true);
   const dispatch = useDispatch();
   const [profileMenu, setProfileMenu] = useState<boolean>(false);
+  const [message, setMessage] = useState<boolean>(false);
   const filterItems = useMemo(
     () =>
       itemData.filter((item) =>
@@ -77,10 +79,14 @@ const MainPage = () => {
   const handleModal: (value: boolean) => void = () => {
     setModal(true);
   };
+
   useEffect(() => {
-    console.log(date_start);
-    console.log(date_end);
-  }, [date_start, date_end]);
+    if (itemData.length == 0) {
+      setMessage(true);
+    } else {
+      setMessage(false);
+    }
+  }, [itemData]);
 
   useEffect(() => {
     if (date_end != null && date_start != null && isConfirmed) {
@@ -158,7 +164,12 @@ const MainPage = () => {
         },
       })
       .then((res) => setUserName(res.data.username))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.status == 401) {
+          localStorage.clear();
+          window.location.reload();
+        }
+      });
   }, [token]);
 
   const LogOut = async () => {
@@ -187,6 +198,15 @@ const MainPage = () => {
 
   return (
     <div>
+      <Message open={message} error={true} setOpen={setMessage}>
+        <h2>Please select correct data</h2>
+        <button
+          className={"RegisterButtonFirst"}
+          onClick={() => setModal(true)}
+        >
+          select
+        </button>
+      </Message>
       <Modal open={modal}>
         <div className="datePickerWrapper">
           <div className={"closeDataPickWrapperButtonWrapper"}>

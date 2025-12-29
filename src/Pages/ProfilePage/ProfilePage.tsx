@@ -33,7 +33,9 @@ const ProfilePage = () => {
     try {
       const formData = new FormData();
       if (data.file) {
-        formData.append("file", data.file[0]);
+        Array.from(data.file).forEach((item) => {
+          formData.append("file", item);
+        });
         setFile(true);
       }
       console.log(formData);
@@ -89,6 +91,7 @@ const ProfilePage = () => {
           <input
             type="file"
             id={"fileUpload"}
+            multiple={true}
             accept={".xlsx"}
             {...register("file", {
               onChange: (e) => {

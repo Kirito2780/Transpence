@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
@@ -39,11 +39,11 @@ const FilesSection = ({
   const [data, setData] = useState<FileSectionProps>();
   const [selectedFile, setSelectedFile] = useState<number[]>([]);
   const [allIds, setAllIds] = useState<number[]>([]);
-  const HandleSelection = (id: number) => {
+  const HandleSelection = useCallback((id: number) => {
     setSelectedFile((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
-  };
+  }, []);
 
   useEffect(() => {
     if (token) {

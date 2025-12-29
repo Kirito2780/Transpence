@@ -2,23 +2,22 @@
 .ProfileContainer{
     padding: 20px 80px 0 80px;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
+    flex-direction: column;
 }
 .ProfileTop{
     display: flex;
-    justify-content: space-between;
-    height: 70%;
+    height: 50%;
     width: 100%;
     gap: 3%;
 }
 .ProfileBottom{
-    height: 30%;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     transition: 0.3s;
+    gap: 3%;
 }
 .ProfileSection{
     border-radius: 10px;
@@ -33,7 +32,7 @@
 .ProfileSection:hover ,.CertificatesSection:hover,.SummaryStatsSection:hover{
     filter: drop-shadow(0 0 2em #cdcdcd);
 }
-.ProfileBottom:hover{
+.SpendingSection:hover{
     filter: drop-shadow(0 0 2em #6e63ff);
 }
 .CertificatesSection{
@@ -391,4 +390,17 @@ display: flex;
     justify-content: space-between;
     padding: 10px;
     align-items: center;
+}
+.HistorySectionWrapper{
+    background-color: #494949;
+    height: 35vh;
+    width: 34.5%;
+    border-radius: 10px;
+}
+.HistorySectionUnwrapper{
+    height: 80vh;
+    width: 34.5%;
+    border-radius: 10px;
+
+    background-color: #494949;
 }
