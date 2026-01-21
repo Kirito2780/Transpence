@@ -22,8 +22,8 @@ const Modal = ({ children, open }: ModalProps) => {
   }, [open]);
 
   const variants = {
-    active: { height: "500px", width: "500px", opacity: 1 },
-    inactive: { height: "0", width: "0", opacity: 0 },
+    active: { scale: 1, opacity: 1 },
+    inactive: { scale: 0, opacity: 0 },
   };
 
   return createPortal(

@@ -69,6 +69,10 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const [profileMenu, setProfileMenu] = useState<boolean>(false);
   const [message, setMessage] = useState<boolean>(false);
+  const expensesAnimation = {
+    initial: { scale: 0 },
+    animate: { scale: 1 },
+  };
   const filterItems = useMemo(
     () =>
       itemData.filter((item) =>
@@ -288,10 +292,21 @@ const MainPage = () => {
           >
             {userName}
           </h2>
-          <div
-            className={
-              profileMenu ? "profile-menu-showed" : "profile-menu-hidden"
-            }
+          <motion.div
+            style={{
+              transformOrigin: "top",
+              background: "#232323",
+              borderRadius: "10px",
+              position: "absolute",
+              right: "10px",
+              padding: "10px",
+            }}
+            initial={{ scaleY: 0, opacity: 0 }}
+            animate={{
+              scaleY: profileMenu ? 1 : 0,
+              opacity: profileMenu ? 1 : 0,
+            }}
+            transition={{ duration: 0.2 }}
           >
             <div className={"profile-menu-item-wrapper"}>
               <NavLink to={"/profile"} className="profile-menu-item">
@@ -330,6 +345,19 @@ const MainPage = () => {
                 </svg>
                 <div className={"profile-menu-item-profile"}>Profile</div>
               </NavLink>
+              <NavLink to={"/compare"} className="profile-menu-item">
+                <svg
+                  className={"profile-menu-svg"}
+                  fill="#000000"
+                  width="40px"
+                  height="40px"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M1,8A1,1,0,0,1,2,7H9.586L7.293,4.707A1,1,0,1,1,8.707,3.293l4,4a1,1,0,0,1,0,1.414l-4,4a1,1,0,1,1-1.414-1.414L9.586,9H2A1,1,0,0,1,1,8Zm21,7H14.414l2.293-2.293a1,1,0,0,0-1.414-1.414l-4,4a1,1,0,0,0,0,1.414l4,4a1,1,0,0,0,1.414-1.414L14.414,17H22a1,1,0,0,0,0-2Z" />
+                </svg>
+                <div className={"profile-menu-item-compare"}>Compare</div>
+              </NavLink>
               <div className="profile-menu-item" onClick={LogOut}>
                 <svg
                   className={"profile-menu-svg-cross"}
@@ -344,7 +372,7 @@ const MainPage = () => {
                 <p>Log out</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </header>
       <main className={"MainContent"}>
@@ -362,9 +390,16 @@ const MainPage = () => {
           checked={checked}
           changeDiagram={changeDiagram}
         />
-
-        <ChartTypeSwitcher checked={checked} setChecked={setChecked} />
-        <section className={"expenses"}>
+        {itemData.length > 0 ? (
+          <ChartTypeSwitcher checked={checked} setChecked={setChecked} />
+        ) : null}
+        <motion.section
+          className={"expenses"}
+          variants={expensesAnimation}
+          animate={"animate"}
+          initial={"initial"}
+          transition={{ delay: 0.6, duration: 0.4 }}
+        >
           <input
             type="text"
             className={"searchInput"}
@@ -422,7 +457,7 @@ const MainPage = () => {
               pagesLength={PagesLength}
             />
           ) : null}
-        </section>
+        </motion.section>
       </main>
     </div>
   );

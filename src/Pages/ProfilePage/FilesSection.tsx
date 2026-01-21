@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
 import FileSectionItem from "./FileSectionItem.tsx";
+import { motion } from "framer-motion";
 
 export type Files = {
   id: number;
@@ -18,9 +19,10 @@ interface FileSectionProps {
 
 interface FileSectionPropsJSX {
   modal: boolean;
+  setModalChildren: (type: string) => void;
   setNewChanges: React.Dispatch<React.SetStateAction<boolean>>;
   setModal: (arg: boolean) => void;
-
+  unwrapped: boolean;
   setError: (value: boolean) => void;
   setTextMessage: (m: string) => void;
   setMessage: (message: boolean) => void;
@@ -29,10 +31,12 @@ interface FileSectionPropsJSX {
 const FilesSection = ({
   setNewChanges,
   setModal,
+  setModalChildren,
   modal,
   setError,
   setMessage,
   setTextMessage,
+  unwrapped,
 }: FileSectionPropsJSX) => {
   const token = useSelector((state: RootState) => state.AuthSlice.token);
   const [deleteFile, setDeleteFile] = useState<boolean>(false);
@@ -44,6 +48,10 @@ const FilesSection = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   }, []);
+  const animationVariants = {
+    initial: { height: "50vh", width: "85%", opacity: 1 },
+    animate: { height: "0", width: "0", opacity: 0 },
+  };
 
   useEffect(() => {
     if (token) {
@@ -95,7 +103,12 @@ const FilesSection = ({
   };
 
   return (
-    <section className={"ProfileSection"}>
+    <motion.section
+      className={"FileSection"}
+      animate={unwrapped ? "animate" : "initial"}
+      variants={animationVariants}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
+    >
       <div className={"ProfileFilesWrapper"}>
         {deleteFile ? (
           <>
@@ -118,8 +131,20 @@ const FilesSection = ({
               <>
                 {data.files.length > 0 ? (
                   <>
-                    <h2 className={"ProfileFilesHeader"}>Files</h2>
-                    <div className={"ProfileFilesItems"}>
+                    <motion.h2
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1, delay: 0.3 }}
+                      className={"ProfileFilesHeader"}
+                    >
+                      Files
+                    </motion.h2>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className={"ProfileFilesItems"}
+                    >
                       {data?.files.map((file) => (
                         <FileSectionItem
                           data={file}
@@ -128,8 +153,13 @@ const FilesSection = ({
                           selected={selectedFile}
                         />
                       ))}
-                    </div>
-                    <div className={"ProfileFilesItemsButtons"}>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6 }}
+                      className={"ProfileFilesItemsButtons"}
+                    >
                       <button
                         className={"ProfileButtonFiles"}
                         onClick={() => setSelectedFile(allIds)}
@@ -142,11 +172,19 @@ const FilesSection = ({
                       >
                         clear all
                       </button>
-                    </div>
-                    <div className={"ProfileFilesButtons"}>
+                    </motion.div>
+                    <motion.div
+                      className={"ProfileFilesButtons"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.7 }}
+                    >
                       <button
                         className={"ProfileButton"}
-                        onClick={() => setModal(true)}
+                        onClick={() => {
+                          setModal(true);
+                          setModalChildren("File");
+                        }}
                       >
                         <svg
                           width="20px"
@@ -197,15 +235,23 @@ const FilesSection = ({
                           <path d="M18.8,16l5.5-5.5c0.8-0.8,0.8-2,0-2.8l0,0C24,7.3,23.5,7,23,7c-0.5,0-1,0.2-1.4,0.6L16,13.2l-5.5-5.5  c-0.8-0.8-2.1-0.8-2.8,0C7.3,8,7,8.5,7,9.1s0.2,1,0.6,1.4l5.5,5.5l-5.5,5.5C7.3,21.9,7,22.4,7,23c0,0.5,0.2,1,0.6,1.4  C8,24.8,8.5,25,9,25c0.5,0,1-0.2,1.4-0.6l5.5-5.5l5.5,5.5c0.8,0.8,2.1,0.8,2.8,0c0.8-0.8,0.8-2.1,0-2.8L18.8,16z" />
                         </svg>
                       </button>
-                    </div>
+                    </motion.div>
                   </>
                 ) : (
                   <>
                     <h2 className={"ProfileFilesHeader"}>No files to show</h2>
-                    <div className={"ProfileFilesNoDataButtonWrapper"}>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.8 }}
+                      className={"ProfileFilesNoDataButtonWrapper"}
+                    >
                       <button
                         className={"ProfileButton"}
-                        onClick={() => setModal(true)}
+                        onClick={() => {
+                          setModal(true);
+                          setModalChildren("File");
+                        }}
                       >
                         <svg
                           width="20px"
@@ -237,7 +283,7 @@ const FilesSection = ({
                           </g>
                         </svg>
                       </button>
-                    </div>
+                    </motion.div>
                   </>
                 )}
               </>
@@ -245,7 +291,7 @@ const FilesSection = ({
           </>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

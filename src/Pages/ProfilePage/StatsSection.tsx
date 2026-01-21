@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
+import { motion } from "framer-motion";
 
 type Category = {
   amount: number;
@@ -54,7 +55,12 @@ const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
   }, [token, changes, modal]);
 
   return (
-    <section className={"ProfileSection"}>
+    <motion.section
+      className={"ProfileSection"}
+      initial={{ y: "600px" }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.1, ease: "easeInOut" }}
+    >
       <div className={"ProfileStats"}>
         <h2 className={"ProfileStatsHeader"}>Stats</h2>
         <div className={"ProfileStatsItems"}>
@@ -94,7 +100,7 @@ const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

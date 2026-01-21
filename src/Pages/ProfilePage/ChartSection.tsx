@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
+import { motion } from "framer-motion";
 
 interface ChartSectionProps {
   date__year: number;
@@ -40,9 +41,18 @@ const ChartSection = ({ modal, changes }: ChartSectionState) => {
   }, [modal, changes]);
 
   return (
-    <section className={"SpendingSection"}>
+    <motion.section
+      className={"SpendingSection"}
+      initial={{ y: "600px" }}
+      animate={{ y: 0 }}
+      transition={{
+        delay: 0.2,
+        duration: 0.2,
+        ease: "easeInOut",
+      }}
+    >
       <div className={"SpendingSectionBackground"}>
-        <h2 style={{ color: "white" }}>Spending Dynamic</h2>
+        <h2 style={{ color: "white" }}>Spending Dynamic(current year)</h2>
         {propsData.length > 0 ? (
           <>
             <Stack direction="row" sx={{ width: "100%" }}>
@@ -69,7 +79,7 @@ const ChartSection = ({ modal, changes }: ChartSectionState) => {
           </>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

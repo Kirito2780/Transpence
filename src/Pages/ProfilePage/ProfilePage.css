@@ -1,11 +1,42 @@
+.MainTitlePage{
+    font-weight: 600;
+    font-size: 50px;
+    font-family: "Balsamiq Sans", sans-serif;
+    color: #b6b6b6;
+    width: fit-content;
+    border-radius: 0 0 15px 0 ;
+    padding:10px;
 
-.ProfileContainer{
-    padding: 20px 80px 0 80px;
+
+}
+.MainTitleFirstPage{
+    color: #202020;
+}
+.MainTitleSecondPage{
+
+    color: #b6b6b6;
+}
+
+.ProfilePageContent {
+    display: flex;
+}
+.ProfileLeft{
+    padding: 20px 0 0 80px;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 55px;
     flex-direction: column;
+    width: 60%;
 }
+.ProfileRight{
+    padding: 20px 0 0 30px;
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+    justify-content: center;
+    width: 40%;
+}
+
 .ProfileTop{
     display: flex;
     height: 50%;
@@ -19,9 +50,20 @@
     transition: 0.3s;
     gap: 3%;
 }
+.FileSection{
+    border-radius: 10px;
+    width: 85%;
+    height: 50vh;
+    background-color: #5c5c5c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.3s;
+
+}
 .ProfileSection{
     border-radius: 10px;
-    width: 33.3%;
+    width: 50%;
     height: 50vh;
     background-color: #5c5c5c;
     display: flex;
@@ -29,7 +71,7 @@
     justify-content: center;
     transition: 0.3s;
 }
-.ProfileSection:hover ,.CertificatesSection:hover,.SummaryStatsSection:hover{
+.ProfileSection:hover ,.CertificatesSection:hover,.SummaryStatsSection:hover,.FileSection:hover,.HistorySectionWrapper:hover{
     filter: drop-shadow(0 0 2em #cdcdcd);
 }
 .SpendingSection:hover{
@@ -392,15 +434,83 @@ display: flex;
     align-items: center;
 }
 .HistorySectionWrapper{
-    background-color: #494949;
-    height: 35vh;
-    width: 34.5%;
+    background-color: #5c5c5c;
+    height: 50vh;
+    width: 100%;
     border-radius: 10px;
+    transition: 0.3s;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
 }
-.HistorySectionUnwrapper{
-    height: 80vh;
-    width: 34.5%;
+.HistorySectionHeader{
+    text-align: center;
+}
+.HistorySectionItem{
+    color: #fae6c9;
+    font-size: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-radius: 10px;
-
+    margin: 10px;
     background-color: #494949;
+}
+.HistorySectionItemWrapper{
+    width: 100%;
+    height: 85%;
+    overflow-y:scroll;
+}
+.HistorySectionBottomSection{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border-top: 1px solid darkgray;
+    height: 50px;
+    overflow: hidden;
+    background-color: #5c5c5c
+}
+.HistorySectionTop{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+}
+.HistorySectionTopSvg:hover{
+    cursor: pointer;
+}
+.HistorySectionTopButton{
+    height: 30px;
+    width: 80px;
+    background-color: #333333;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    transition: 0.3s ease;
+}
+.HistorySectionTopButton:hover{
+    cursor: pointer;
+}
+.HistorySectionButton{
+    height: 40px;
+    width: 100px;
+    background-color: #333333;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    transition: 0.3s ease;
+
+}
+.FilterWrapper{
+    height: 200px;
+    color: white;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+    overflow-y:scroll;
+    margin-bottom: 10px;
 }

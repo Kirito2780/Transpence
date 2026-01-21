@@ -17,6 +17,7 @@ interface ProfileSectionProps {
   setError: (value: boolean) => void;
   setTextMessage: (m: string) => void;
   setMessage: (message: boolean) => void;
+  setChanges: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfilePage = ({ ...props }: ProfileSectionProps) => {
@@ -116,6 +117,7 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
           props.setTextMessage(res.data.detail);
           console.log(res.data);
           props.setError(false);
+          props.setChanges((prev: boolean) => !prev);
         })
         .catch((err) => {
           console.log(err);
@@ -231,7 +233,12 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   };
 
   return (
-    <section className={"ProfileSection"}>
+    <motion.section
+      className={"ProfileSection"}
+      initial={{ x: "-500px" }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.1, ease: "easeInOut" }}
+    >
       <div className={"ProfileBio"}>
         {!deleteUser ? (
           <>
@@ -333,7 +340,7 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
           </>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

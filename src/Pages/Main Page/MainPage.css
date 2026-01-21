@@ -295,21 +295,12 @@
     opacity: 0;
 
 }
-.profile-menu-showed{
-    position: absolute;
-    right: 20px;
-    z-index: 10;
-    height: 100px;
-    width: 100px;
-    background: #232323;
-    border-radius: 10px;
 
-}
 .profile-menu-item{
     margin-top: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
     height: 50%;
     text-decoration: none;
@@ -318,6 +309,9 @@
 .profile-menu-item:hover{
     color:white;
     cursor: pointer;
+    .profile-menu-svg{
+        fill: #b6b6b6;
+    }
 
     .profile-menu-svg g{
         fill:#b6b6b6;
@@ -341,6 +335,9 @@
 }
 .profile-menu-item-profile{
     margin-right: 9px;
+}
+.profile-menu-item-compare{
+    font-size:15px;
 }
 
 .PagiButtons,.PagiButtonsArrowLeft,.PagiButtonsArrowRight{
