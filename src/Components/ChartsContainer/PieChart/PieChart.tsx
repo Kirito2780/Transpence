@@ -3,6 +3,8 @@ import "./PieChart.css";
 
 import type { IChartsData } from "../../../Pages/Main Page/MainPage.tsx";
 import { type JSX } from "react";
+import type { RootState } from "../../../Store/Store.tsx";
+import { useSelector } from "react-redux";
 
 interface IPieChartProps {
   data: IChartsData[];
@@ -11,7 +13,9 @@ interface IPieChartProps {
 
 const CustomPieChart = ({ data, color }: IPieChartProps): JSX.Element => {
   const totalSum = data.reduce((sum, item) => sum + item.total_amount, 0);
-
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
   const chartData = data.map((item, index) => ({
     id: index,
     value: item.total_amount,
@@ -29,7 +33,7 @@ const CustomPieChart = ({ data, color }: IPieChartProps): JSX.Element => {
             data: chartData,
             highlightScope: { fade: "global", highlight: "item" },
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-            valueFormatter: (d) => `${d.value.toLocaleString()}`,
+            valueFormatter: (d) => `${d.value.toLocaleString()}${currency}`,
             arcLabel: (d) => {
               const percent = ((d.value / totalSum) * 100).toFixed(0);
               return `${percent}%`;

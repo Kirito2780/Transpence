@@ -19,6 +19,9 @@ const ItemPage = () => {
   const { id } = useParams();
   const [data, setData] = useState<IItemData | null>(null);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
 
   useEffect(() => {
     if (!id || !token) return;
@@ -75,6 +78,7 @@ const ItemPage = () => {
             >
               {data.operation_type == "income" ? <span>+</span> : null}
               {data.amount}
+              <span>{currency}</span>
             </h6>
             <p>{data.date}</p>
           </section>

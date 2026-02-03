@@ -49,6 +49,7 @@
     justify-content: space-between;
     transition: 0.3s;
     gap: 3%;
+    overflow: hidden;
 }
 .FileSection{
     border-radius: 10px;
@@ -73,9 +74,6 @@
 }
 .ProfileSection:hover ,.CertificatesSection:hover,.SummaryStatsSection:hover,.FileSection:hover,.HistorySectionWrapper:hover{
     filter: drop-shadow(0 0 2em #cdcdcd);
-}
-.SpendingSection:hover{
-    filter: drop-shadow(0 0 2em #6e63ff);
 }
 .CertificatesSection{
     border-radius: 10px;
@@ -513,4 +511,15 @@ display: flex;
     flex-direction: column;
     overflow-y:scroll;
     margin-bottom: 10px;
+}
+.currencySelector{
+    width: 50px;
+    border-radius: 10px;
+    border:1px solid #838383;
+    background-color: #494949;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px;
 }

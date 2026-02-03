@@ -8,10 +8,12 @@ import type { RootState } from "../Store/Store.tsx";
 import { useEffect, lazy, Suspense, useState } from "react";
 import { setToken } from "../Slices/authSlice.tsx";
 import ItemPage from "../Pages/ItemPage/ItemPage.tsx";
-import { ComparePage } from "../Pages/ComparePage/ComparePage.tsx";
+import { MonthPage } from "../Pages/ComparePage/MonthPage/MonthPage.tsx";
+import { YearPage } from "../Pages/ComparePage/YearPage/YearPage.tsx";
 
 const MainPage = lazy(() => import("../Pages/Main Page/MainPage.tsx"));
 const ProfilePage = lazy(() => import("../Pages/ProfilePage/ProfilePage.tsx"));
+const ComparePage = lazy(() => import("../Pages/ComparePage/ComparePage.tsx"));
 
 function App() {
   const token = useSelector((state: RootState) => state.AuthSlice.token);
@@ -44,6 +46,8 @@ function App() {
               <Route path={"/"} element={<MainPage />} />
               <Route path={"/profile"} element={<ProfilePage />} />
               <Route path={"/compare"} element={<ComparePage />} />
+              <Route path={"/compare/month"} element={<MonthPage />} />
+              <Route path={"/compare/year"} element={<YearPage />} />
               <Route path={"/operations/:id"} element={<ItemPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>

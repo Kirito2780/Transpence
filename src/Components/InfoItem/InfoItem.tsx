@@ -1,5 +1,7 @@
 import "./InfoItem.css";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../Store/Store.tsx";
 
 interface IinfoItemsProps {
   id: number;
@@ -12,6 +14,10 @@ interface IinfoItemsProps {
 }
 
 const InfoItem = (props: IinfoItemsProps) => {
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
+
   return (
     <Link to={`/operations/${props.id}`} className="infoItem">
       <div className="infoItemTitle">
@@ -25,7 +31,10 @@ const InfoItem = (props: IinfoItemsProps) => {
         <div className={"itemTag"}>{props.operation_type}</div>
         <div>{props.date}</div>
       </div>
-      <div className={"infoTotal"}>{props.total}</div>
+      <div className={"infoTotal"}>
+        {props.total}
+        <span>{currency}</span>
+      </div>
     </Link>
   );
 };

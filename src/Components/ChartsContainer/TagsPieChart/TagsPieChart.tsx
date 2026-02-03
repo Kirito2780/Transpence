@@ -2,6 +2,8 @@
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts";
 import { type JSX } from "react";
 import type { ITagsDiagram } from "../../../Pages/Main Page/MainPage.tsx";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../Store/Store.tsx";
 
 interface ITagsPieChartProps {
   data: ITagsDiagram[];
@@ -10,7 +12,9 @@ interface ITagsPieChartProps {
 }
 const TagsPieChart = ({ data, color }: ITagsPieChartProps): JSX.Element => {
   const totalSum = data.reduce((sum, item) => sum + item.total_amount, 0);
-
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
   const chartData = data.map((item, index) => ({
     id: index,
     value: item.total_amount,
@@ -28,7 +32,7 @@ const TagsPieChart = ({ data, color }: ITagsPieChartProps): JSX.Element => {
             data: chartData,
             highlightScope: { fade: "global", highlight: "item" },
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-            valueFormatter: (d) => `${d.value.toLocaleString()}`,
+            valueFormatter: (d) => `${d.value.toLocaleString()}${currency}`,
             arcLabelRadius: "60%",
             arcLabel: (d) => {
               const percent = (d.value / totalSum) * 100;

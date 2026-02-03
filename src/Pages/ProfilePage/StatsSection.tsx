@@ -30,6 +30,9 @@ interface StatsSectionPropsChanger {
 const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
   const [data, setData] = useState<StatsSectionProps>();
   const token = useSelector((state: RootState) => state.AuthSlice.token);
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
 
   useEffect(() => {
     if (!token) return;
@@ -71,12 +74,20 @@ const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
 
           <div className={"ProfileStatsItem"}>
             <span>Incomes:</span>
-            {data?.incomes}
+            <div>
+              {data?.incomes}
+
+              <span>{currency}</span>
+            </div>
           </div>
 
           <div className={"ProfileStatsItem"}>
             <span>Expenses:</span>
-            {data?.expenses}
+            <div>
+              {data?.expenses}
+
+              <span>{currency}</span>
+            </div>
           </div>
 
           <div className={"ProfileStatsBigItem"}>
@@ -86,7 +97,10 @@ const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
             </div>
             <div className={"ProfileStatsItemDiv"}>
               <span>Value of category:</span>
-              {data?.most_valuable_category.amount}
+              <div>
+                {data?.most_valuable_category.amount}
+                <span>{currency}</span>
+              </div>
             </div>
           </div>
 

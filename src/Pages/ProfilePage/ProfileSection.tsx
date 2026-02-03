@@ -6,6 +6,7 @@ import type { RootState } from "../../Store/Store.tsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { setToken } from "../../Slices/authSlice.tsx";
 import { useDispatch } from "react-redux";
+import { setCurrency } from "../../Slices/currencySlice.tsx";
 
 interface ProfileSection {
   email: string;
@@ -33,7 +34,17 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [fetching, setFetching] = useState<boolean>(false);
+  const [currencyList, setCurrencyList] = useState<string[]>([]);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
+  const currency = useSelector(
+    (state: RootState) => state.CurrencySlice.currency,
+  );
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem("currency");
+    if (savedCurrency) {
+      dispatch(setCurrency(savedCurrency));
+    }
+  }, []);
 
   useEffect(() => {
     axios
@@ -196,7 +207,6 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
 
     setChange((prev) => !prev);
   };
-
   const handleDelete = () => {
     axios
       .delete("http://172.30.88.250:8000/auth/users/me/", {
@@ -231,6 +241,21 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
     hidden: { opacity: 0, y: 0 },
     visible: { opacity: 1, y: 20 },
   };
+  useEffect(() => {
+    axios
+      .get("http://172.30.88.250:8000/currency/", {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        setCurrencyList(res.data.currency);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   return (
     <motion.section
@@ -271,6 +296,22 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
               <>
                 <h2 className={"ProfileNickname"}>{userData?.username}</h2>
                 <p className={"ProfileEmail"}>{userData?.email}</p>
+                <select
+                  className={"currencySelector"}
+                  name="currency"
+                  id="currency"
+                  value={currency}
+                  onChange={(e) => {
+                    dispatch(setCurrency(e.target.value));
+                    localStorage.setItem("currency", e.target.value);
+                  }}
+                >
+                  {currencyList.map((e, index) => (
+                    <option value={e} key={index}>
+                      {e}
+                    </option>
+                  ))}
+                </select>
               </>
             )}
           </>

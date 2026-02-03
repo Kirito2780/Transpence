@@ -1,17 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./ComparePage.css";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.tsx";
 import { MonthPicker } from "./MonthPicker.tsx";
 import { YearPicker } from "./YearPicker";
-import Box from "@mui/material/Box";
-import { BarChart } from "@mui/x-charts/BarChart";
-import { PieChart } from "@mui/x-charts/PieChart";
+import Modal from "../../Components/Modal/Modal.tsx";
 
-interface MonthsStats {
+export interface MonthsStats {
   first_month_stats: {
     top_tag: string;
     total_incomes: number;
@@ -61,7 +59,7 @@ interface MonthsStats {
     };
   };
 }
-interface YearsStats {
+export interface YearStats {
   first_year_stats: {
     total_incomes: number;
     total_expenses: number;
@@ -108,12 +106,13 @@ interface YearsStats {
   };
 }
 
-export const ComparePage = () => {
+const ComparePage = () => {
   const comparePickerAnimations = {
     initial: { opacity: 0, scale: 0 },
     animate: { opacity: 1, scale: 1 },
     sent: { opacity: 0, scale: 0 },
   };
+
   const token = useSelector((state: RootState) => state.AuthSlice.token);
   const [toggle, setToggle] = useState<boolean>(false);
   const [firstMonth, setFirstMonth] = useState<string>("1");
@@ -123,9 +122,13 @@ export const ComparePage = () => {
   const [firstNYear, setFirstNYear] = useState<number>(2025);
   const [secondNYear, setSecondNYear] = useState<number>(2026);
   const [poolUrl, setPoolUrl] = useState<string>("");
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [seconds, setSeconds] = useState<number>(0);
   const [monthData, setMonthData] = useState<MonthsStats | null>();
-  const [yearData, setYearData] = useState<YearsStats | null>();
+  const [yearData, setYearData] = useState<YearStats | null>();
   const [send, setSend] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const MONTHS = [
     "January",
@@ -146,6 +149,10 @@ export const ComparePage = () => {
 
   useEffect(() => {
     if (poolUrl) {
+      setLoading(true);
+      const timer = setInterval(() => {
+        setSeconds((seconds) => seconds + 1);
+      }, 1000);
       let stopped = false;
       const monthRequest = async () => {
         if (stopped) return;
@@ -157,20 +164,29 @@ export const ComparePage = () => {
         console.log(fetch.data.status);
         if (fetch.data.status == "SUCCESS") {
           if ("first_month_stats" in fetch.data.result) {
+            setLoading(false);
             setMonthData(fetch.data.result);
             console.log(fetch.data.result);
           } else if ("first_year_stats" in fetch.data.result) {
+            setLoading(false);
             setYearData(fetch.data.result);
           }
           return;
         }
-
+        if (fetch.data.status == "FAILURE") {
+          setLoading(false);
+          stopped = true;
+          clearInterval(timer);
+          setOpen(true);
+          return;
+        }
         setTimeout(monthRequest, 5000);
       };
       monthRequest();
 
       return () => {
         stopped = true;
+        clearInterval(timer);
       };
     }
   }, [poolUrl]);
@@ -194,6 +210,7 @@ export const ComparePage = () => {
       })
       .catch((err) => {
         console.log(err);
+        setOpen(true);
       })
       .finally(() => {
         setSend(true);
@@ -215,6 +232,7 @@ export const ComparePage = () => {
       })
       .catch((err) => {
         console.log(err);
+        setOpen(true);
       })
       .finally(() => {
         setSend(true);
@@ -227,8 +245,77 @@ export const ComparePage = () => {
       setSecondMonth("2");
     }
   }, [firstMonth, secondMonth, firstYear, secondYear]);
+
+  useEffect(() => {
+    if (send && monthData) {
+      navigate("/compare/month", {
+        state: {
+          monthData,
+          firstMonthName,
+          firstMonth,
+          firstYear,
+          secondMonthName,
+          secondYear,
+          secondMonth,
+        },
+      });
+    }
+  }, [send, monthData]);
+  useEffect(() => {
+    console.log(seconds);
+  }, [seconds]);
+
+  useEffect(() => {
+    if (send && yearData) {
+      navigate("/compare/year", {
+        state: {
+          yearData,
+          firstYear,
+          secondYear,
+        },
+      });
+    }
+  }, [send, yearData]);
+  if (loading) {
+    return (
+      <div className="laodingWrapper">
+        <div className="loaderWrapper">
+          <span className="loader"></span>
+          <AnimatePresence>
+            {seconds >= 3 && (
+              <motion.button
+                animate={{ opacity: 1 }}
+                initial={{ opacity: 0 }}
+                className={"loadingButton"}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Exit
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
+      <Modal open={open}>
+        <div className="ErrorContentWrapper">
+          <h2>Wrong data</h2>
+          <button
+            className={"ComparePageModalButton"}
+            onClick={() => {
+              location.reload();
+              setOpen(false);
+            }}
+          >
+            back
+          </button>
+        </div>
+      </Modal>
       <header>
         <h1 className={"MainTitlePageCompare"}>
           <NavLink to={"/"} className={"nav-link-compare"}>
@@ -287,433 +374,6 @@ export const ComparePage = () => {
                 />
               )}
             </AnimatePresence>
-            <AnimatePresence>
-              {send && monthData && (
-                <div>
-                  <motion.section
-                    className={"MonthsAppearance"}
-                    variants={comparePickerAnimations}
-                    initial={"initial"}
-                    animate={"animate"}
-                    transition={{
-                      duration: 0.3,
-                      delay: 0.5,
-                    }}
-                  >
-                    <div className={"MonthsAppearanceItem"}>
-                      <h1>{firstMonthName}</h1>
-                      <div className={"MonthsAppearanceItemBlock"}>
-                        <div className={"MonthsAppearanceItemBlockWrapper"}>
-                          <div>
-                            <h2>Year</h2>
-                            <h3 className={"MonthsAppearanceItemTextBlock"}>
-                              {firstYear}
-                            </h3>
-                          </div>
-                          <div>
-                            <h2>Month</h2>
-                            <h3 className={"MonthsAppearanceItemTextBlock"}>
-                              {firstMonth}
-                            </h3>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={"MonthsAppearanceItem"}>
-                      <h1>{secondMonthName}</h1>
-                      <div className={"MonthsAppearanceItemBlockWrapper"}>
-                        <div>
-                          <h2>Year</h2>
-                          <h3 className={"MonthsAppearanceItemTextBlock"}>
-                            {secondYear}
-                          </h3>
-                        </div>
-                        <div>
-                          <h2>Month</h2>
-                          <h3 className={"MonthsAppearanceItemTextBlock"}>
-                            {secondMonth}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.section>
-                  <motion.section
-                    className={"MonthsComparison"}
-                    variants={comparePickerAnimations}
-                    initial={"initial"}
-                    animate={"animate"}
-                    transition={{ delay: 0.7, duration: 0.3 }}
-                  >
-                    <div className={"MonthsComparisonItem"}>
-                      <h2>Top Tag</h2>
-                      <div className={"MonthsComparisonItemContentWrapper"}>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {firstMonthName}
-                          </h3>
-                          <h4>{monthData.first_month_stats.top_tag}</h4>
-                        </div>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {secondMonthName}
-                          </h3>
-                          <h4>{monthData.second_month_stats.top_tag}</h4>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={"MonthsComparisonItem"}>
-                      <h2>Incomes</h2>
-                      <div className={"MonthsComparisonItemContentWrapper"}>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {firstMonthName}
-                          </h3>
-                          <h4 className={"MonthsComparisonItemIncomes"}>
-                            {monthData.first_month_stats.total_incomes}
-                          </h4>
-                        </div>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {secondMonthName}
-                          </h3>
-                          <h4 className={"MonthsComparisonItemIncomes"}>
-                            {monthData.second_month_stats.total_incomes}
-                          </h4>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={"MonthsComparisonItem"}>
-                      <h2>Expenses</h2>
-                      <div className={"MonthsComparisonItemContentWrapper"}>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {firstMonthName}
-                          </h3>
-                          <h4 className={"MonthsComparisonItemExpenses"}>
-                            {monthData.first_month_stats.total_expenses}
-                          </h4>
-                        </div>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {secondMonthName}
-                          </h3>
-                          <h4 className={"MonthsComparisonItemExpenses"}>
-                            {monthData.second_month_stats.total_expenses}
-                          </h4>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={"MonthsComparisonItem"}>
-                      <h2>Month Profit</h2>
-                      <div className={"MonthsComparisonItemContentWrapper"}>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {firstMonthName}
-                          </h3>
-                          <h4>
-                            {monthData.first_month_stats.net_month_profit}
-                          </h4>
-                        </div>
-                        <div>
-                          <h3 className={"MonthsComparisonItemHeader"}>
-                            {secondMonthName}
-                          </h3>
-                          <h4>
-                            {monthData.second_month_stats.net_month_profit}
-                          </h4>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.section>
-                  <motion.div
-                    className={"MonthsBarChartSection"}
-                    variants={comparePickerAnimations}
-                    initial={"initial"}
-                    whileInView={"animate"}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className={"MonthsBarChartSectionFirstBar"}>
-                      <Box sx={{ width: "100%", height: "100%" }}>
-                        <BarChart
-                          slotProps={{
-                            legend: {
-                              sx: {
-                                color: "white",
-                              },
-                            },
-                          }}
-                          xAxis={[
-                            {
-                              scaleType: "band",
-                              data: ["Incomes", "Expenses"],
-                              tickLabelStyle: { fill: "white" },
-                              position: "bottom",
-                              height: 28,
-                            },
-                          ]}
-                          series={[
-                            {
-                              label: firstMonthName,
-                              data: [
-                                monthData.first_month_stats.total_incomes,
-                                monthData.first_month_stats.total_expenses,
-                              ],
-                              color: "#8884d8",
-                            },
-                            {
-                              label: secondMonthName,
-                              data: [
-                                monthData.second_month_stats.total_incomes,
-                                monthData.second_month_stats.total_expenses,
-                              ],
-                              color: "#82ca9d",
-                            },
-                          ]}
-                          yAxis={[
-                            {
-                              id: "leftAxisId",
-                              width: 50,
-                              tickLabelStyle: { fill: "white" },
-                            },
-                            {
-                              id: "rightAxisId",
-                              position: "right",
-                              tickLabelStyle: { fill: "white" },
-                            },
-                          ]}
-                        ></BarChart>
-                      </Box>
-                    </div>
-                    <div className={"MonthsBarChartSectionSecondBar"}>
-                      <Box sx={{ width: "100%", height: "100%" }}>
-                        <BarChart
-                          slotProps={{
-                            legend: {
-                              sx: {
-                                color: "white",
-                              },
-                            },
-                          }}
-                          xAxis={[
-                            {
-                              scaleType: "band",
-                              data: [
-                                "Average incomes",
-                                "Average expenses",
-                                "Average savings",
-                              ],
-                              tickLabelStyle: { fill: "white" },
-                              position: "bottom",
-                              height: 28,
-                            },
-                          ]}
-                          series={[
-                            {
-                              label: firstMonthName,
-                              data: [
-                                monthData.first_avg_month_stats.avg_day_incomes,
-                                monthData.first_avg_month_stats
-                                  .avg_day_expenses,
-                                monthData.first_avg_month_stats
-                                  .avg_monthly_saving,
-                              ],
-                              color: "#8884d8",
-                            },
-                            {
-                              label: secondMonthName,
-                              data: [
-                                monthData.second_avg_month_stats
-                                  .avg_day_incomes,
-                                monthData.second_avg_month_stats
-                                  .avg_day_expenses,
-                                monthData.second_avg_month_stats
-                                  .avg_monthly_saving,
-                              ],
-                              color: "#82ca9d",
-                            },
-                          ]}
-                          yAxis={[
-                            {
-                              id: "leftAxisId",
-                              width: 50,
-                              tickLabelStyle: { fill: "white" },
-                            },
-                            {
-                              id: "rightAxisId",
-                              position: "right",
-                              tickLabelStyle: { fill: "white" },
-                            },
-                          ]}
-                        ></BarChart>
-                      </Box>
-                    </div>
-                  </motion.div>
-                  <motion.div
-                    className={"MonthPieChartSection"}
-                    variants={comparePickerAnimations}
-                    initial={"initial"}
-                    whileInView={"animate"}
-                    viewport={{ once: false, amount: 0.4 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className={"MonthsPieChart"}>
-                      <h2>Standard Deviation</h2>
-                      <PieChart
-                        series={[
-                          {
-                            data: [
-                              {
-                                label: firstMonthName,
-                                value:
-                                  monthData.first_avg_month_stats.avg_stddev,
-                                color: "#8884d8",
-                              },
-                              {
-                                label: secondMonthName,
-                                value:
-                                  monthData.second_avg_month_stats.avg_stddev,
-                                color: "#82ca9d",
-                              },
-                            ],
-                            highlightScope: {
-                              fade: "global",
-                              highlight: "item",
-                            },
-                            faded: {
-                              innerRadius: 30,
-                              additionalRadius: -30,
-                              color: "gray",
-                            },
-                          },
-                        ]}
-                        height={550}
-                        width={500}
-                      ></PieChart>
-                    </div>
-                  </motion.div>
-                  <motion.div
-                    className={"MonthOverallSection"}
-                    variants={comparePickerAnimations}
-                    initial={"initial"}
-                    whileInView={"animate"}
-                    viewport={{ once: false, amount: 0.5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className={"CardsWrapper"}>
-                      <motion.div
-                        className={"PercentChangeCard"}
-                        style={{
-                          color:
-                            monthData.month_comparison.stddev_comparison
-                              .percent_change > 0
-                              ? "#82ca9d"
-                              : "red",
-                          border:
-                            monthData.month_comparison.stddev_comparison
-                              .percent_change > 0
-                              ? "1px solid #82ca9d"
-                              : "1px solid red",
-                        }}
-                      >
-                        <div>
-                          <h2
-                            style={{ fontSize: "30px" }}
-                            className={"PercentChangeCardHeader"}
-                          >
-                            {
-                              monthData.month_comparison.stddev_comparison
-                                .stability_level
-                            }
-                          </h2>
-                          <div className={"PercentChangeCardPercentText"}>
-                            <span>
-                              {
-                                monthData.month_comparison.stddev_comparison
-                                  .percent_change
-                              }
-                            </span>
-                            {monthData.month_comparison.stddev_comparison
-                              .percent_change > 0 ? (
-                              <>
-                                <svg
-                                  width="80px"
-                                  height="80px"
-                                  viewBox="0 0 48 48"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <g id="SVGRepo_bgCarrier" stroke-width="0" />
-
-                                  <g
-                                    id="SVGRepo_tracerCarrier"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-
-                                  <g id="SVGRepo_iconCarrier">
-                                    <path
-                                      d="M24 6L24 42"
-                                      stroke="#8ff0a4"
-                                      stroke-width="4"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    />
-                                    <path
-                                      d="M12 18L24 6L36 18"
-                                      stroke="#8ff0a4"
-                                      stroke-width="4"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    />
-                                  </g>
-                                </svg>
-                              </>
-                            ) : (
-                              <svg
-                                width="80px"
-                                height="80px"
-                                viewBox="0 0 48 48"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                transform="rotate(180)"
-                              >
-                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
-
-                                <g
-                                  id="SVGRepo_tracerCarrier"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-
-                                <g id="SVGRepo_iconCarrier">
-                                  {" "}
-                                  <path
-                                    d="M24 6L24 42"
-                                    stroke="#c01c28"
-                                    stroke-width="4"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />{" "}
-                                  <path
-                                    d="M12 18L24 6L36 18"
-                                    stroke="#c01c28"
-                                    stroke-width="4"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />{" "}
-                                </g>
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                </div>
-              )}
-            </AnimatePresence>
           </>
         ) : (
           <>
@@ -736,3 +396,5 @@ export const ComparePage = () => {
     </div>
   );
 };
+
+export default ComparePage;
