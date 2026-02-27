@@ -4,15 +4,16 @@ interface PaginationProps {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   pagesLength: number;
+  handlePage: (page: number) => void;
 }
 
 const Pagination = ({
   currentPage,
   setCurrentPage,
   pagesLength,
+  handlePage,
 }: PaginationProps) => {
   const [startPage, setStartPage] = useState<number>(1);
-
   const paginationButtons = useMemo(() => {
     const buttons: number[] = [];
     const maxPage = Math.min(startPage + 4, pagesLength);
@@ -45,7 +46,10 @@ const Pagination = ({
         <button
           key={num}
           className={`PagiButtons ${num === currentPage ? "active" : ""}`}
-          onClick={() => setCurrentPage(num)}
+          onClick={() => {
+            setCurrentPage(num);
+            handlePage(num);
+          }}
         >
           {num}
         </button>

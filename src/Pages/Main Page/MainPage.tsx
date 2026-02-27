@@ -4,7 +4,7 @@ import axios from "axios";
 import type { RootState } from "../../Store/Store.tsx";
 import { useSelector, useDispatch } from "react-redux";
 import InfoItem from "../../Components/InfoItem/InfoItem.tsx";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "../../Components/Modal/Modal.tsx";
@@ -16,6 +16,8 @@ import Pagination from "../../Components/Pagination/Pagination";
 import { NavLink } from "react-router-dom";
 import { setFirstDay } from "../../Slices/dateSlice.tsx";
 import { Message } from "../../Components/Message/Message.tsx";
+import { type SubmitHandler } from "react-hook-form";
+import { FilterSection } from "./FilterSection.tsx";
 
 export interface IChartsData {
   operation_type: string;
@@ -23,6 +25,7 @@ export interface IChartsData {
   count_operations: number;
   [key: string]: string | number;
 }
+
 export interface IItemData {
   id: number;
   title: string;
@@ -42,12 +45,17 @@ export interface ITagsDiagram {
 
   [key: string]: string | number;
 }
+export interface IFilterForm {
+  op_type: string[];
+  max_sum: number;
+  min_sum: number;
+  desc: string[];
+}
 
 const MainPage = () => {
   const [chartData, setChartData] = useState<IChartsData[]>([]);
   const [itemData, setItemData] = useState<IItemData[]>([]);
   const [page, setPage] = useState<number>(1);
-  const OperationsPerPage: number = 5;
   const [barChartData, setBarChartData] = useState<IBarChartData[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const token = useSelector((state: RootState) => state.AuthSlice.token);
@@ -69,6 +77,11 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const [profileMenu, setProfileMenu] = useState<boolean>(false);
   const [message, setMessage] = useState<boolean>(false);
+  const [allPages, setAllPages] = useState<number>(0);
+  const [filter, setFilter] = useState<boolean>(false);
+  const [expIncArr, setExpIncArr] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState<any>(null);
+
   const expensesAnimation = {
     initial: { scale: 0 },
     animate: { scale: 1 },
@@ -109,6 +122,19 @@ const MainPage = () => {
       tags: catArr,
     };
     axios
+      .post("http://172.30.88.250:8000/graph_ops/", timeInterval, {
+        headers: {
+          Authorization: `Token ${token}`,
+          accept: "application/json",
+        },
+      })
+      .then((res) => {
+        setItemData(res.data.details.results);
+        setAllPages(res.data.details.count);
+        setActiveFilter(null);
+        setPage(1);
+      });
+    axios
       .post("http://172.30.88.250:8000/graph/", timeInterval, {
         headers: {
           Authorization: `Token ${token}`,
@@ -120,20 +146,15 @@ const MainPage = () => {
         setBarChartData(res.data.date_detail);
         setTagsDiagram(res.data.tags_detail);
         setIsConfirmed(false);
-        setItemData(res.data.details);
       })
       .catch((error) => console.log(`Error:${error}`));
   };
-  const PaginatedItemData = useMemo(() => {
-    return itemData.slice(
-      (page - 1) * OperationsPerPage,
-      page * OperationsPerPage,
-    );
-  }, [page, itemData, date_start, date_end]);
 
   const PagesLength = useMemo(() => {
-    return Math.ceil(itemData.length / OperationsPerPage);
-  }, [itemData]);
+    if (allPages) {
+      return Math.ceil(allPages / itemData.length);
+    }
+  }, [allPages]);
 
   useEffect(() => {
     const browserDateRaw = sessionStorage.getItem("date_start");
@@ -199,7 +220,73 @@ const MainPage = () => {
       console.log(err);
     }
   };
+  const handlePage = (pg: number) => {
+    console.log(pg);
+    if (!date_start || !date_end) return;
+    const startFormatted = date_start?.toISOString().slice(0, 10);
+    const endFormatted = date_end?.toISOString().slice(0, 10);
 
+    const baseData = {
+      date_start: startFormatted,
+      date_end: endFormatted,
+      tags: catArr,
+    };
+
+    const requestData = activeFilter ? { ...activeFilter } : baseData;
+
+    axios
+      .post(`http://172.30.88.250:8000/graph_ops/?page=${pg}`, requestData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data.details.results);
+
+        console.log("count:", res.data.details.count);
+        console.log("results length:", res.data.details.results.length);
+        setItemData(res.data.details.results);
+        setPage(pg);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    console.log(expIncArr);
+  }, [expIncArr]);
+  const handleFilterSubmit: SubmitHandler<IFilterForm> = (data) => {
+    if (!date_start || !date_end) return;
+    const startFormatted = date_start?.toISOString().slice(0, 10);
+    const endFormatted = date_end?.toISOString().slice(0, 10);
+    const filterData = {
+      date_start: startFormatted,
+      date_end: endFormatted,
+      tags: catArr,
+      op_type: expIncArr,
+      max_sum: data.max_sum,
+      min_sum: data.min_sum,
+      desc: data.desc,
+      q: search,
+    };
+
+    setActiveFilter(filterData);
+    axios
+      .post("http://172.30.88.250:8000/graph_ops/?page=1", filterData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setAllPages(res.data.details.count);
+        setItemData(res.data.details.results);
+        setPage(1);
+      });
+  };
   return (
     <div>
       <Message open={message} error={true} setOpen={setMessage}>
@@ -400,13 +487,43 @@ const MainPage = () => {
           initial={"initial"}
           transition={{ delay: 0.6, duration: 0.4 }}
         >
-          <input
-            type="text"
-            className={"searchInput"}
-            placeholder={"search operation by name"}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <AnimatePresence mode={"wait"}>
+            {filter && (
+              <FilterSection
+                setFilter={setFilter}
+                handleFilterSubmit={handleFilterSubmit}
+                setExpIncArr={setExpIncArr}
+              />
+            )}
+          </AnimatePresence>
+          <div className={"operationFilterSection"}>
+            <input
+              type="text"
+              className={"searchInput"}
+              placeholder={"search operation by name"}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <svg
+              onClick={() => setFilter(true)}
+              style={{ display: filter ? "none" : "block" }}
+              className={"mainFilterSvg"}
+              width="45px"
+              height="45px"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 4.6C3 4.03995 3 3.75992 3.10899 3.54601C3.20487 3.35785 3.35785 3.20487 3.54601 3.10899C3.75992 3 4.03995 3 4.6 3H19.4C19.9601 3 20.2401 3 20.454 3.10899C20.6422 3.20487 20.7951 3.35785 20.891 3.54601C21 3.75992 21 4.03995 21 4.6V6.33726C21 6.58185 21 6.70414 20.9724 6.81923C20.9479 6.92127 20.9075 7.01881 20.8526 7.10828C20.7908 7.2092 20.7043 7.29568 20.5314 7.46863L14.4686 13.5314C14.2957 13.7043 14.2092 13.7908 14.1474 13.8917C14.0925 13.9812 14.0521 14.0787 14.0276 14.1808C14 14.2959 14 14.4182 14 14.6627V17L10 21V14.6627C10 14.4182 10 14.2959 9.97237 14.1808C9.94787 14.0787 9.90747 13.9812 9.85264 13.8917C9.7908 13.7908 9.70432 13.7043 9.53137 13.5314L3.46863 7.46863C3.29568 7.29568 3.2092 7.2092 3.14736 7.10828C3.09253 7.01881 3.05213 6.92127 3.02763 6.81923C3 6.70414 3 6.58185 3 6.33726V4.6Z"
+                stroke="#000000"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
           {itemData.length > 0 ? (
             <motion.div
               className={"infoItemsWrapper"}
@@ -417,7 +534,7 @@ const MainPage = () => {
               {!itemData ? (
                 <h2>Loading...</h2>
               ) : search.length == 0 ? (
-                PaginatedItemData.map((item) => (
+                itemData.map((item) => (
                   <InfoItem
                     key={item.id}
                     id={item.id}
@@ -450,8 +567,9 @@ const MainPage = () => {
             <h2 className={"NoData"}>No available data to Show</h2>
           )}
 
-          {itemData.length > 0 ? (
+          {itemData.length > 0 && PagesLength ? (
             <Pagination
+              handlePage={handlePage}
               currentPage={page}
               setCurrentPage={setPage}
               pagesLength={PagesLength}

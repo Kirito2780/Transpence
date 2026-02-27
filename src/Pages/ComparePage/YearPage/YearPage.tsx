@@ -135,15 +135,27 @@ export const YearPage = () => {
             <div className={"MonthsComparisonItemContentWrapper"}>
               <div>
                 <h3 className={"MonthsComparisonItemHeader"}>{firstYear}</h3>
-                <h4>{yearData.first_year_stats.net_profit}</h4>
-
-                <span>{currency}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4>{yearData.first_year_stats.net_profit}</h4>
+                  <span>{currency}</span>
+                </div>
               </div>
               <div>
                 <h3 className={"MonthsComparisonItemHeader"}>{secondYear}</h3>
-                <h4>{yearData.second_year_stats.net_profit}</h4>
-
-                <span>{currency}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4>{yearData.second_year_stats.net_profit}</h4>
+                  <span>{currency}</span>
+                </div>
               </div>
             </div>
           </div>
