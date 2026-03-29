@@ -4,11 +4,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { MonthPicker } from "./MonthPicker.tsx";
 import { YearPicker } from "./YearPicker";
 import Modal from "../../Components/Modal/Modal.tsx";
-
+import { API_URL } from "../../api/api.ts";
 export interface MonthsStats {
   first_month_stats: {
     top_tag: string;
@@ -156,7 +156,7 @@ const ComparePage = () => {
       let stopped = false;
       const monthRequest = async () => {
         if (stopped) return;
-        const fetch = await axios.get(`http://172.30.88.250:8000${poolUrl}`, {
+        const fetch = await axios.get(`${API_URL}${poolUrl}`, {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -199,7 +199,7 @@ const ComparePage = () => {
     formData.append("second_month", secondPeriod);
     console.log(formData);
     axios
-      .post("http://172.30.88.250:8000/compare/", formData, {
+      .post(`${API_URL}/compare/`, formData, {
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -221,7 +221,7 @@ const ComparePage = () => {
     formData.append("first_year", firstNYear.toString());
     formData.append("second_year", secondNYear.toString());
     axios
-      .post("http://172.30.88.250:8000/compare/", formData, {
+      .post(`${API_URL}/compare/`, formData, {
         headers: {
           Authorization: `Token ${token}`,
         },

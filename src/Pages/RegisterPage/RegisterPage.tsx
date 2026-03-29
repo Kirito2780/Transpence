@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { API_URL } from "../../api/api.ts";
 interface IForm {
   username: string;
   email: string;
@@ -34,7 +35,6 @@ const RegisterPage = () => {
   const [response, setResponse] = useState<ISuccess | null>(null);
   const [file, setFile] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-
   const navigate = useNavigate();
 
   const onRegister: SubmitHandler<IForm> = async (data) => {
@@ -51,10 +51,7 @@ const RegisterPage = () => {
         setFile(true);
       }
 
-      const res = await axios.post(
-        "http://172.30.88.250:8000/auth/users/",
-        formData,
-      );
+      const res = await axios.post(`${API_URL}/auth/users/`, formData);
       console.log("success", res);
       const responseData: ISuccess = res.data;
       setResponse(responseData);
@@ -188,10 +185,7 @@ const RegisterPage = () => {
         >
           back
         </button>
-        <Link
-          to={"http://172.30.88.250:8000/download_example/"}
-          className={"FAQ"}
-        >
+        <Link to={`${API_URL}/download_example/`} className={"FAQ"}>
           ?
         </Link>
       </div>

@@ -4,8 +4,9 @@ import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { motion } from "framer-motion";
+import { API_URL } from "../../api/api.ts";
 
 interface ChartSectionProps {
   date__year: number;
@@ -28,7 +29,7 @@ const ChartSection = ({ modal, changes }: ChartSectionState) => {
 
   useEffect(() => {
     axios
-      .get("http://172.30.88.250:8000/auth/users/get_usergraph/", {
+      .get(`${API_URL}/auth/users/get_usergraph/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${token}`,

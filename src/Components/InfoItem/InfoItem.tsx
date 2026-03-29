@@ -1,7 +1,7 @@
 import "./InfoItem.css";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 
 interface IinfoItemsProps {
   id: number;

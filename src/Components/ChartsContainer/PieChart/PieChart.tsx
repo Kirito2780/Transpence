@@ -1,9 +1,9 @@
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts";
 import "./PieChart.css";
 
-import type { IChartsData } from "../../../Pages/Main Page/MainPage.tsx";
+import type { IChartsData } from "../../../Pages/MainPage/MainPage.tsx";
 import { type JSX } from "react";
-import type { RootState } from "../../../Store/Store.tsx";
+import type { RootState } from "../../../Store/Store.ts";
 import { useSelector } from "react-redux";
 
 interface IPieChartProps {

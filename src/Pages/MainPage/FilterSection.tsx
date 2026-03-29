@@ -6,12 +6,14 @@ import React from "react";
 interface FilterSectionProps {
   setFilter: (filter: boolean) => void;
   setExpIncArr: React.Dispatch<React.SetStateAction<string[]>>;
+  setDescAsc: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleFilterSubmit: (filter: IFilterForm) => void;
 }
 
 export const FilterSection = ({
   setFilter,
   setExpIncArr,
+  setDescAsc,
   handleFilterSubmit,
 }: FilterSectionProps) => {
   const { handleSubmit, register } = useForm<IFilterForm>({
@@ -56,12 +58,22 @@ export const FilterSection = ({
         </div>
         <section className={"mainFilterRiseFallButtonsSectionWrapper"}>
           <div className={"mainFilterRiseButtonBlock"}>
-            <label className={"mainFilterButtonText"}>ascending</label>
-            <input type="checkbox" />
+            <label className={"mainFilterButtonText"}>Ascending</label>
+            <input
+              type="radio"
+              value={"ascending"}
+              name={"orderBy"}
+              onChange={(e) => setDescAsc(e.target.value)}
+            />
           </div>
           <div className={"mainFilterFallButtonBlock"}>
-            <label className={"mainFilterButtonText"}>descending</label>
-            <input type="checkbox" />
+            <label className={"mainFilterButtonText"}>Descending</label>
+            <input
+              type="radio"
+              value={"descending"}
+              name={"orderBy"}
+              onChange={(e) => setDescAsc(e.target.value)}
+            />
           </div>
         </section>
 

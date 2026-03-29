@@ -6,8 +6,9 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { setToken } from "../../Slices/authSlice.tsx";
+import { API_URL } from "../../api/api.ts";
 
 interface IForm {
   username: string;
@@ -39,10 +40,7 @@ const LoginPage = () => {
       formData.append("username", data.username);
       formData.append("password", data.password);
 
-      const res = await axios.post(
-        "http://172.30.88.250:8000/auth/token/login/",
-        formData,
-      );
+      const res = await axios.post(`${API_URL}/auth/token/login/`, formData);
       if (!token) {
         dispatch(setToken(res.data.auth_token));
         localStorage.setItem("token", res.data.auth_token);

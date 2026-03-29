@@ -16,16 +16,22 @@
 
     color: #b6b6b6;
 }
+.SecondTitleWrapper{
+    display: flex;
+    justify-content: center;
+align-items: center;
+}
 .SecondTitle{
     margin-right: 10px;
     font-weight: 600;
-    font-size: 25px;
+    font-size: 35px;
     font-family: "Balsamiq Sans", sans-serif;
     color: #b6b6b6;
     width: fit-content;
     border-radius: 0 0 0 15px ;
     padding: 10px;
     cursor: pointer;
+
 
 }
 .Main-header{
@@ -319,6 +325,9 @@
     .profile-menu-svg-cross{
         fill: #b6b6b6;
     }
+    .profile-menu-svg-compare path{
+        stroke: white;
+    }
 }
 .profile-menu-item-wrapper{
     display: flex;
@@ -464,4 +473,8 @@
     height: 30px;
     width: 100px;
     cursor: pointer;
+}
+.profile-menu-item-credit{
+    width: 50%;
+    margin-right: 7px;
 }

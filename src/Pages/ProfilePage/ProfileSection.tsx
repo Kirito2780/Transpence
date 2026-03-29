@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { AnimatePresence, motion } from "framer-motion";
 import { setToken } from "../../Slices/authSlice.tsx";
 import { useDispatch } from "react-redux";
 import { setCurrency } from "../../Slices/currencySlice.tsx";
+import { API_URL } from "../../api/api.ts";
 
 interface ProfileSection {
   email: string;
@@ -48,7 +49,7 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
 
   useEffect(() => {
     axios
-      .get("http://172.30.88.250:8000/auth/users/me/", {
+      .get(`${API_URL}/auth/users/me/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -110,16 +111,12 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
       formDataUsername.append("new_username", username);
 
       axios
-        .post(
-          "http://172.30.88.250:8000/auth/users/set_username/",
-          formDataUsername,
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
+        .post(`${API_URL}/auth/users/set_username/`, formDataUsername, {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
           },
-        )
+        })
         .then((res) => {
           setFetching(false);
           setUsername(res.data.new_username);
@@ -144,16 +141,12 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
       formDataEmail.append("email", email);
 
       axios
-        .post(
-          "http://172.30.88.250:8000/auth/users/set_email/",
-          formDataEmail,
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
+        .post(`${API_URL}/auth/users/set_email/`, formDataEmail, {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
           },
-        )
+        })
         .then((res) => {
           setEmail(res.data.email);
           setOldEmail(res.data.email);
@@ -181,16 +174,12 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
       formDataPassword.append("current_password", currentPassword);
 
       axios
-        .post(
-          "http://172.30.88.250:8000/auth/users/set_password/",
-          formDataPassword,
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
+        .post(`${API_URL}/auth/users/set_password/`, formDataPassword, {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
           },
-        )
+        })
         .then(() => {
           props.setMessage(true);
           setFetching(false);
@@ -209,7 +198,7 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   };
   const handleDelete = () => {
     axios
-      .delete("http://172.30.88.250:8000/auth/users/me/", {
+      .delete(`${API_URL}/auth/users/me/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -243,7 +232,7 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   };
   useEffect(() => {
     axios
-      .get("http://172.30.88.250:8000/currency/", {
+      .get(`${API_URL}/currency/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",

@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { HistorySectionItem } from "./HistorySectionItem.tsx";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
+import { API_URL } from "../../api/api.ts";
 
 interface HistorySectionProps {
   unwrapped: boolean;
@@ -59,7 +60,7 @@ export const HistorySection = ({
       try {
         if (filters) {
           const response = await axios.post<HistorySectionData[]>(
-            "http://172.30.88.250:8000/users/logs/",
+            `${API_URL}/users/logs/`,
             filters,
             {
               headers: {
@@ -71,7 +72,7 @@ export const HistorySection = ({
           setData(response.data);
         } else {
           const response = await axios.get<HistorySectionData[]>(
-            "http://172.30.88.250:8000/users/logs/",
+            `${API_URL}/users/logs/`,
             {
               headers: { Authorization: `Token ${token}` },
             },
@@ -87,7 +88,7 @@ export const HistorySection = ({
 
   const handleDelete = () => {
     axios
-      .delete("http://172.30.88.250:8000/users/logs/", {
+      .delete(`${API_URL}/users/logs/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",

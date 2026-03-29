@@ -1,5 +1,5 @@
 import "./ProfilePage.css";
-import "../Main Page/MainPage.css";
+import "../MainPage/MainPage.css";
 import ProfileSection from "./ProfileSection.tsx";
 import StatsSection from "./StatsSection.tsx";
 import FilesSection from "./FilesSection.tsx";
@@ -10,10 +10,11 @@ import Modal from "../../Components/Modal/Modal.tsx";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { Message } from "../../Components/Message/Message.tsx";
 import { HistorySection } from "./HistorySection.tsx";
 import { HistoryFilterModal } from "./HistoryFilterModal.tsx";
+import { API_URL } from "../../api/api.ts";
 
 interface IProfilePageForm {
   file?: FileList;
@@ -50,15 +51,11 @@ const ProfilePage = () => {
         setFile(true);
       }
       console.log(formData);
-      const request = await axios.post(
-        "http://172.30.88.250:8000/users/files/",
-        formData,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
+      const request = await axios.post(`${API_URL}/users/files/`, formData, {
+        headers: {
+          Authorization: `Token ${token}`,
         },
-      );
+      });
       const response = request.data;
       setMessageText(response.message);
       setLoading(false);

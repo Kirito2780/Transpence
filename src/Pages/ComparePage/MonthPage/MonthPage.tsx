@@ -15,7 +15,7 @@ interface MonthPageLocationState {
   secondMonthName: string;
 }
 
-export const MonthPage = () => {
+const MonthPage = () => {
   const location = useLocation();
   const state = location.state as MonthPageLocationState | null;
   if (!state) {
@@ -564,3 +564,4 @@ export const MonthPage = () => {
     </LazyMotion>
   );
 };
+export default MonthPage;

@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { IBarChartData } from "../../../Pages/Main Page/MainPage.tsx";
+import type { IBarChartData } from "../../../Pages/MainPage/MainPage.tsx";
 import "./CustomBarChart.css";
 
 interface IBarChartProps {

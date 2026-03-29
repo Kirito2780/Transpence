@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import FileSectionItem from "./FileSectionItem.tsx";
 import { motion } from "framer-motion";
+import { API_URL } from "../../api/api.ts";
 
 export type Files = {
   id: number;
@@ -61,7 +62,7 @@ const FilesSection = ({
 
   const Fetch = async () => {
     try {
-      const response = await axios("http://172.30.88.250:8000/users/files/", {
+      const response = await axios(`${API_URL}/users/files/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -77,7 +78,7 @@ const FilesSection = ({
 
   const handleDelete = () => {
     axios
-      .delete("http://172.30.88.250:8000/users/files/", {
+      .delete(`${API_URL}/users/files/`, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",

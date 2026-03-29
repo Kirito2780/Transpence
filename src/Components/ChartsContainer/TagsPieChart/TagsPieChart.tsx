@@ -1,9 +1,9 @@
 //import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts";
 import { type JSX } from "react";
-import type { ITagsDiagram } from "../../../Pages/Main Page/MainPage.tsx";
+import type { ITagsDiagram } from "../../../Pages/MainPage/MainPage.tsx";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../Store/Store.tsx";
+import type { RootState } from "../../../Store/Store.ts";
 
 interface ITagsPieChartProps {
   data: ITagsDiagram[];

@@ -70,6 +70,7 @@
 }
 .BackToRegiLog{
     background-color: transparent;
+    margin-left: 10px;
     border: none;
     transition: 0.2s;
     border-radius: 50%;

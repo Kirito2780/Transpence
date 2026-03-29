@@ -1,0 +1,28 @@
+.MainTitlePageCompare{
+    font-weight: 600;
+    font-size: 50px;
+    font-family: "Balsamiq Sans", sans-serif;
+    color: #b6b6b6;
+    width: fit-content;
+    border-radius: 0 0 15px 0 ;
+    padding:10px;
+}
+.nav-link-compare{
+
+    text-decoration: none;
+}
+.MainTitleFirstPageCompare{
+
+    color: #202020;
+}
+.MainTitleSecondPageCompare{
+
+
+    color: #b6b6b6;
+}
+.creditSelectorHeader{
+    font-size: 30px;
+    color: #b6b6b6;
+    text-align: center;
+    padding: 0;
+}

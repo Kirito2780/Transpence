@@ -6,7 +6,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import type { YearStats } from "../ComparePage.tsx";
 import "../ComparePage.css";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../Store/Store.tsx";
+import type { RootState } from "../../../Store/Store.ts";
 
 interface YearPageLocationState {
   yearData: YearStats;
@@ -14,7 +14,7 @@ interface YearPageLocationState {
   secondYear: string;
 }
 
-export const YearPage = () => {
+const YearPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currency = useSelector(
@@ -530,3 +530,4 @@ export const YearPage = () => {
     </LazyMotion>
   );
 };
+export default YearPage;

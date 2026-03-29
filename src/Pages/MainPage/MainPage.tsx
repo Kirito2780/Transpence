@@ -1,7 +1,7 @@
 import "./MainPage.css";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { useSelector, useDispatch } from "react-redux";
 import InfoItem from "../../Components/InfoItem/InfoItem.tsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,8 @@ import { setFirstDay } from "../../Slices/dateSlice.tsx";
 import { Message } from "../../Components/Message/Message.tsx";
 import { type SubmitHandler } from "react-hook-form";
 import { FilterSection } from "./FilterSection.tsx";
+import { useAuth } from "../../Hooks/useAuth.ts";
+import { API_URL } from "../../api/api.ts";
 
 export interface IChartsData {
   operation_type: string;
@@ -72,7 +74,6 @@ const MainPage = () => {
   const [modal, setModal] = useState<boolean>(false);
   const [tagsDiagram, setTagsDiagram] = useState<ITagsDiagram[]>([]);
   const [changeDiagram, setChangeDiagram] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>("");
   const [isConfirmed, setIsConfirmed] = useState<boolean>(true);
   const dispatch = useDispatch();
   const [profileMenu, setProfileMenu] = useState<boolean>(false);
@@ -80,19 +81,15 @@ const MainPage = () => {
   const [allPages, setAllPages] = useState<number>(0);
   const [filter, setFilter] = useState<boolean>(false);
   const [expIncArr, setExpIncArr] = useState<string[]>([]);
+  const [descAsc, setDescAsc] = useState<string>();
   const [activeFilter, setActiveFilter] = useState<any>(null);
+  const { userName, logout } = useAuth();
 
   const expensesAnimation = {
     initial: { scale: 0 },
     animate: { scale: 1 },
   };
-  const filterItems = useMemo(
-    () =>
-      itemData.filter((item) =>
-        item.title.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [search, itemData],
-  );
+
   const handleModal: (value: boolean) => void = () => {
     setModal(true);
   };
@@ -122,7 +119,7 @@ const MainPage = () => {
       tags: catArr,
     };
     axios
-      .post("http://172.30.88.250:8000/graph_ops/", timeInterval, {
+      .post(`${API_URL}/graph_ops/`, timeInterval, {
         headers: {
           Authorization: `Token ${token}`,
           accept: "application/json",
@@ -135,7 +132,7 @@ const MainPage = () => {
         setPage(1);
       });
     axios
-      .post("http://172.30.88.250:8000/graph/", timeInterval, {
+      .post(`${API_URL}/graph/`, timeInterval, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -173,53 +170,13 @@ const MainPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://172.30.88.250:8000/tags/")
+      .get(`${API_URL}/tags/`)
       .then((res) => {
         setCategories(res.data.tags);
       })
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    axios
-      .get("http://172.30.88.250:8000/auth/users/me/", {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => setUserName(res.data.username))
-      .catch((err) => {
-        if (err.status == 401) {
-          localStorage.clear();
-          window.location.reload();
-        }
-      });
-  }, [token]);
-
-  const LogOut = async () => {
-    if (!token) return;
-
-    try {
-      await axios
-        .post(
-          "http://172.30.88.250:8000/auth/token/logout/",
-          {},
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        )
-        .catch((err) => console.log(err));
-
-      localStorage.removeItem("token");
-      location.reload();
-    } catch (err) {
-      console.log(err);
-    }
-  };
   const handlePage = (pg: number) => {
     console.log(pg);
     if (!date_start || !date_end) return;
@@ -230,12 +187,13 @@ const MainPage = () => {
       date_start: startFormatted,
       date_end: endFormatted,
       tags: catArr,
+      q: search,
     };
 
     const requestData = activeFilter ? { ...activeFilter } : baseData;
 
     axios
-      .post(`http://172.30.88.250:8000/graph_ops/?page=${pg}`, requestData, {
+      .post(`${API_URL}/graph_ops/?page=${pg}`, requestData, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -254,9 +212,6 @@ const MainPage = () => {
       });
   };
 
-  useEffect(() => {
-    console.log(expIncArr);
-  }, [expIncArr]);
   const handleFilterSubmit: SubmitHandler<IFilterForm> = (data) => {
     if (!date_start || !date_end) return;
     const startFormatted = date_start?.toISOString().slice(0, 10);
@@ -268,13 +223,13 @@ const MainPage = () => {
       op_type: expIncArr,
       max_sum: data.max_sum,
       min_sum: data.min_sum,
-      desc: data.desc,
+      desc: descAsc ? descAsc : "date",
       q: search,
     };
-
+    console.log(filterData);
     setActiveFilter(filterData);
     axios
-      .post("http://172.30.88.250:8000/graph_ops/?page=1", filterData, {
+      .post(`${API_URL}/graph_ops/?page=1`, filterData, {
         headers: {
           Authorization: `Token ${token}`,
           "Content-Type": "application/json",
@@ -286,6 +241,35 @@ const MainPage = () => {
         setItemData(res.data.details.results);
         setPage(1);
       });
+  };
+  const handleSearch = () => {
+    let query = search;
+    if (query.length <= 3 && query.length > 0) {
+      query += "*";
+    }
+    console.log(query);
+
+    const startFormatted = date_start?.toISOString().slice(0, 10);
+    const endFormatted = date_end?.toISOString().slice(0, 10);
+    const searchData = {
+      date_start: startFormatted,
+      date_end: endFormatted,
+      tags: catArr,
+      q: query,
+    };
+    axios
+      .post(`${API_URL}/graph_ops/`, searchData, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        setAllPages(res.data.details.count);
+        setItemData(res.data.details.results);
+        setPage(1);
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <div>
@@ -372,7 +356,7 @@ const MainPage = () => {
           <span className={"MainTitleSecond"}>pence</span>
         </h1>
 
-        <div>
+        <div className={"SecondTitleWrapper"}>
           <h2
             onClick={() => setProfileMenu((prev) => !prev)}
             className={"SecondTitle"}
@@ -386,6 +370,7 @@ const MainPage = () => {
               borderRadius: "10px",
               position: "absolute",
               right: "10px",
+              top: "60px",
               padding: "10px",
             }}
             initial={{ scaleY: 0, opacity: 0 }}
@@ -445,7 +430,26 @@ const MainPage = () => {
                 </svg>
                 <div className={"profile-menu-item-compare"}>Compare</div>
               </NavLink>
-              <div className="profile-menu-item" onClick={LogOut}>
+              <NavLink to={"/credit"} className={"profile-menu-item"}>
+                <svg
+                  className={"profile-menu-svg-compare"}
+                  width="40px"
+                  height="40px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 6H5C3.89543 6 3 6.89543 3 8V14M21 3L16 9M15 3L15 4M22 8L22 9M3 14V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V14H3Z"
+                    stroke="#000"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <div className={"profile-menu-item-credit"}>Credit</div>
+              </NavLink>
+              <div className="profile-menu-item" onClick={logout}>
                 <svg
                   className={"profile-menu-svg-cross"}
                   fill="#000000"
@@ -493,6 +497,7 @@ const MainPage = () => {
                 setFilter={setFilter}
                 handleFilterSubmit={handleFilterSubmit}
                 setExpIncArr={setExpIncArr}
+                setDescAsc={setDescAsc}
               />
             )}
           </AnimatePresence>
@@ -503,6 +508,11 @@ const MainPage = () => {
               placeholder={"search operation by name"}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key == "Enter") {
+                  handleSearch();
+                }
+              }}
             />
 
             <svg
@@ -533,23 +543,8 @@ const MainPage = () => {
             >
               {!itemData ? (
                 <h2>Loading...</h2>
-              ) : search.length == 0 ? (
-                itemData.map((item) => (
-                  <InfoItem
-                    key={item.id}
-                    id={item.id}
-                    tags={item.tags}
-                    svg={item.svg}
-                    total={item.total}
-                    date={item.date}
-                    title={item.title}
-                    operation_type={item.operation_type}
-                  />
-                ))
-              ) : filterItems.length == 0 ? (
-                <h2>no suggestion</h2>
               ) : (
-                filterItems.map((item) => (
+                itemData.map((item) => (
                   <InfoItem
                     key={item.id}
                     id={item.id}

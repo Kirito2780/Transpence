@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../Store/Store.tsx";
+import type { RootState } from "../../Store/Store.ts";
 import { motion } from "framer-motion";
+import { API_URL } from "../../api/api.ts";
 
 type Category = {
   amount: number;
@@ -39,15 +40,12 @@ const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
 
     const statsData = async () => {
       try {
-        const axiosData = await axios.get(
-          "http://172.30.88.250:8000/auth/users/stats/",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
-            },
+        const axiosData = await axios.get(`${API_URL}/auth/users/stats/`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
           },
-        );
+        });
         const readyData: StatsSectionProps = axiosData.data;
         setData(readyData);
       } catch (error) {
