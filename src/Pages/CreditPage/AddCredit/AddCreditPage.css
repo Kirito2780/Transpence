@@ -95,7 +95,7 @@
     color: #b6b6b6;
 }
 .creditFormInput{
-    height: 30px;
+    height: 35px;
     border-radius: 10px ;
     border: 1px solid #4a4a4a;
     width: 100%;
@@ -111,7 +111,7 @@
     font-size: 15px;
 }
 .creditColorInput{
-    height: 30px;
+    height: 35px;
     border-radius: 10px ;
     border: 1px solid #4a4a4a;
     width: 43.5%;
@@ -120,10 +120,10 @@
 
 }
 .creditFormInputHalf{
-    height: 30px;
+    height: 35px;
     border-radius: 10px ;
     border: 1px solid #4a4a4a;
-    width: 50%;
+    width: 100%;
     padding-left: 10px;
     outline: none;
     background-color: #b6b6b6;
@@ -191,4 +191,36 @@ form{
 .formConfirmButtonWrapper{
     display: flex;
     justify-content: flex-end;
+}
+.creditFormInputHalfWrapper{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+.formErrorMessage{
+    color: darkred;
+}
+.creditFormInputWrapper{
+    display: flex;
+    align-items: center;
+}
+.creditInputLabel{
+    width: 20%;
+    color: #b6b6b6;
+    font-size: 15px;
+}
+.creditFormInputDate{
+        height: 35px;
+        border-radius: 10px ;
+        border: 1px solid #4a4a4a;
+        width: 80%;
+        padding-left: 10px;
+        outline: none;
+        background-color: #b6b6b6;
+
+
+}
+.creditFormInputDate:focus{
+    color: #202020;
+    outline: #b6b6b6 solid 1px;
 }
