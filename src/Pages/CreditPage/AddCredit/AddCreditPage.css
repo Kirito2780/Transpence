@@ -196,15 +196,23 @@ form{
     display: flex;
     flex-direction: column;
     width: 50%;
+    position: relative;
 }
 .formErrorMessage{
-    color: darkred;
+    color: tomato;
+    font-size: 13px;
+    height: 12px;
+    position: absolute;
+    bottom: -12px;
+    left: 0;
 }
 .creditFormInputWrapper{
     display: flex;
     align-items: center;
+    position: relative;
 }
 .creditInputLabel{
+    margin-left: 10px;
     width: 20%;
     color: #b6b6b6;
     font-size: 15px;
@@ -223,4 +231,21 @@ form{
 .creditFormInputDate:focus{
     color: #202020;
     outline: #b6b6b6 solid 1px;
+}
+.creditForm{
+    gap: 16px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+.mortgageCreditForm{
+        gap: 16px;
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+
 }
