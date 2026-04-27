@@ -1,7 +1,6 @@
 import { ButtonBack } from "./ButtonBack/ButtonBack.tsx";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "./ErrorMessage/ErrorMesage.tsx";
-import { data } from "framer-motion/m";
 
 interface IFormValues {
   name: string;
@@ -23,8 +22,10 @@ export const ConsumerLoanForm = () => {
     formState: { errors },
   } = useForm<IFormValues>({ mode: "onSubmit" });
 
-  const onSubmitCredit = (data: IFormValues) => {};
-  console.log(data);
+  const onSubmitCredit = (data: IFormValues) => {
+    console.log(data);
+  };
+
   return (
     <div>
       <ButtonBack />
