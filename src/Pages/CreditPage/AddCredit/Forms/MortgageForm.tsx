@@ -2,6 +2,7 @@ import "../AddCreditPage.css";
 import { ButtonBack } from "./ButtonBack/ButtonBack.tsx";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import { ErrorMessage } from "./ErrorMessage/ErrorMesage.tsx";
 interface IMortageForm {
   loan_type: string;
   loan_name: string;
@@ -37,7 +38,10 @@ export const MortgageForm = () => {
     >
       <ButtonBack />
       <h2 className={"creditFormHeader"}>Create mortgage dashboard</h2>
-      <form onSubmit={handleSubmit(SendMortgageForm)}>
+      <form
+        onSubmit={handleSubmit(SendMortgageForm)}
+        className={"mortgageCreditForm"}
+      >
         <input
           className={"creditFormInput"}
           type="text"
@@ -74,11 +78,11 @@ export const MortgageForm = () => {
                 },
               })}
             />
-            {errors.down_payment && (
-              <span className={"formErrorMessage"}>
-                {errors.down_payment.message}
-              </span>
-            )}
+            <div className={"errorContainer"}>
+              {errors.down_payment && (
+                <ErrorMessage message={errors.down_payment.message} />
+              )}
+            </div>
           </div>
           <div className={"creditFormInputHalfWrapper"}>
             <input
@@ -92,39 +96,34 @@ export const MortgageForm = () => {
                 },
               })}
             />
+
             {errors.property_value && (
-              <span className={"formErrorMessage"}>
-                {errors.property_value.message}
-              </span>
+              <ErrorMessage message={errors.property_value.message} />
             )}
           </div>
         </div>
-        <input
-          type="text"
-          maxLength={3}
-          className={"creditFormInput"}
-          placeholder={"Interest rate: %"}
-          {...register("interest_rate", {
-            required: {
-              value: true,
-              message: "this field is required",
-            },
-            maxLength: {
-              value: 3,
-              message: "length is too high",
-            },
-          })}
-        />
-        {errors.interest_rate && (
-          <span className={"formErrorMessage"}>
-            {errors.interest_rate.message}
-          </span>
-        )}
-
         <div className={"creditFormInputWrapper"}>
-          <label htmlFor={"loan_end"} className={"creditInputLabel"}>
-            loan issuance date
-          </label>
+          <input
+            type="text"
+            maxLength={3}
+            className={"creditFormInput"}
+            placeholder={"Interest rate: %"}
+            {...register("interest_rate", {
+              required: {
+                value: true,
+                message: "this field is required",
+              },
+              maxLength: {
+                value: 3,
+                message: "length is too high",
+              },
+            })}
+          />
+          {errors.interest_rate && (
+            <ErrorMessage message={errors.interest_rate.message} />
+          )}
+        </div>
+        <div className={"creditFormInputWrapper"}>
           <input
             type="date"
             className={"creditFormInputDate"}
@@ -135,16 +134,14 @@ export const MortgageForm = () => {
               },
             })}
           />
-        </div>
-        {errors.loan_insurance && (
-          <span className={"formErrorMessage"}>
-            {errors.loan_insurance.message}
-          </span>
-        )}
-        <div className={"creditFormInputWrapper"}>
           <label htmlFor={"loan_end"} className={"creditInputLabel"}>
-            Loan end date
+            loan issuance date
           </label>
+          {errors.loan_insurance && (
+            <ErrorMessage message={errors.loan_insurance.message} />
+          )}
+        </div>
+        <div className={"creditFormInputWrapper"}>
           <input
             id={"loan_end"}
             type="date"
@@ -156,10 +153,13 @@ export const MortgageForm = () => {
               },
             })}
           />
+          <label htmlFor={"loan_end"} className={"creditInputLabel"}>
+            Loan end date
+          </label>
+          {errors.loan_end && (
+            <ErrorMessage message={errors.loan_end.message} />
+          )}
         </div>
-        {errors.loan_end && (
-          <span className={"formErrorMessage"}>{errors.loan_end.message}</span>
-        )}
 
         <h2 className={"creditFormHeader"}>Optional</h2>
         <input
