@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { HistorySectionItem } from "./HistorySectionItem.tsx";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.ts";
 import { API_URL } from "../../api/api.ts";
+import useFetch from "../../Hooks/useFetch.ts";
 
 interface HistorySectionProps {
   unwrapped: boolean;
@@ -29,7 +29,9 @@ export interface HistorySectionData {
   user: number;
   action_color: string;
 }
-
+type DeleteResponse = {
+  message: string;
+};
 export const HistorySection = ({
   unwrapped,
   setUnwrapped,
@@ -45,64 +47,55 @@ export const HistorySection = ({
     animate: { height: "86vh", width: "85%", marginBottom: "13px" },
   };
   const token = useSelector((state: RootState) => state.AuthSlice.token);
-  const [data, setData] = useState<HistorySectionData[]>([]);
   const [disabled, setDisabled] = useState<boolean>(false);
+  const getHistory = useFetch<HistorySectionData[]>(
+    "get",
+    `${API_URL}/users/logs/`,
+    { headers: { Authorization: `Token ${token}` } },
+    false,
+  );
+  const sendHistory = useFetch<HistorySectionData[]>(
+    "post",
+    `${API_URL}/users/logs/`,
+    { headers: { Authorization: `Token ${token}` } },
+    false,
+  );
+  const deleteHistory = useFetch<DeleteResponse>(
+    "delete",
+    `${API_URL}/users/logs/`,
+    { headers: { Authorization: `Token ${token}` } },
+    false,
+  );
+
+  const data = filters ? sendHistory.state : getHistory.state;
 
   useEffect(() => {
-    if (data.length <= 0) {
+    if (!data || data?.length <= 0) {
       setDisabled(true);
     } else {
       setDisabled(false);
     }
-  }, [data, token]);
+  }, [getHistory.state, token]);
   useEffect(() => {
-    const getData = async () => {
-      try {
-        if (filters) {
-          const response = await axios.post<HistorySectionData[]>(
-            `${API_URL}/users/logs/`,
-            filters,
-            {
-              headers: {
-                Authorization: `Token ${token}`,
-                "Content-Type": "application/json",
-              },
-            },
-          );
-          setData(response.data);
-        } else {
-          const response = await axios.get<HistorySectionData[]>(
-            `${API_URL}/users/logs/`,
-            {
-              headers: { Authorization: `Token ${token}` },
-            },
-          );
-          setData(response.data);
-        }
-      } catch (err) {
-        console.log(err);
+    const getData = () => {
+      if (filters) {
+        sendHistory.fetchData(filters);
+      } else {
+        getHistory.fetchData();
       }
     };
     getData();
   }, [token, changes, filters]);
 
-  const handleDelete = () => {
-    axios
-      .delete(`${API_URL}/users/logs/`, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setData([]);
-        console.log(res);
-        setMessage(true);
-        setTextMessage(res.data.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const handleDelete = async () => {
+    try {
+      const res = await deleteHistory.fetchData();
+      setMessage(true);
+      setTextMessage(res?.data.message || "Logs deleted successfully");
+      getHistory.fetchData();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

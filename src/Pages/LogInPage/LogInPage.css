@@ -81,7 +81,7 @@
     background-color: rgba(0, 0, 0, 0.3);
 }
 .LogInErrorPasswordMessage{
-    color: darkred;
+    color: tomato;
     position: absolute;
-    top: 54%;
+    top: 56%;
 }

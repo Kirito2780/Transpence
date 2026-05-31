@@ -22,6 +22,7 @@ export const CreditAvailability = ({ children }: { children: JSX.Element }) => {
         },
       )
       .then((res) => {
+
         if (res.data.length > 0) {
           setIsCredit(true);
         } else {

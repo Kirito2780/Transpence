@@ -171,6 +171,7 @@ align-items: center;
 .datePickerLabel{
     color: white;
     font-size: 20px;
+    text-align: center;
 }
 .datePickerTags{
     text-align: center;
@@ -326,7 +327,7 @@ align-items: center;
         fill: #b6b6b6;
     }
     .profile-menu-svg-compare path{
-        stroke: white;
+        stroke: #b6b6b6;
     }
 }
 .profile-menu-item-wrapper{

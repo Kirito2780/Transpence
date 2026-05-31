@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.ts";
 import { motion } from "framer-motion";
 import { API_URL } from "../../api/api.ts";
+import useFetch from "../../Hooks/useFetch.ts";
 
 type Category = {
   amount: number;
@@ -29,25 +29,24 @@ interface StatsSectionPropsChanger {
 }
 
 const StatsSection = ({ modal, changes }: StatsSectionPropsChanger) => {
-  const [data, setData] = useState<StatsSectionProps>();
   const token = useSelector((state: RootState) => state.AuthSlice.token);
   const currency = useSelector(
     (state: RootState) => state.CurrencySlice.currency,
   );
+  const getStatus = useFetch<StatsSectionProps>(
+    "get",
+    `${API_URL}/auth/users/stats/`,
+    { headers: { Authorization: `Token ${token}` } },
+    false,
+  );
+  const data = getStatus.state;
 
   useEffect(() => {
     if (!token) return;
 
     const statsData = async () => {
       try {
-        const axiosData = await axios.get(`${API_URL}/auth/users/stats/`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
-          },
-        });
-        const readyData: StatsSectionProps = axiosData.data;
-        setData(readyData);
+        getStatus.fetchData();
       } catch (error) {
         console.log(error);
       }

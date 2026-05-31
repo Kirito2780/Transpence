@@ -1,0 +1,22 @@
+.CreditItemOperation{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #292929;
+    width: 90%;
+    height: 20px;
+    border-radius: 10px;
+    padding: 30px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.CreditItemOperation:hover{
+    transform: scale(1.05);
+}
+.CreditItemOperationText{
+    color: #b6b6b6;
+    font-size: 25px;
+    display: inline-block;
+    width: 140px;
+    text-align: center;
+}

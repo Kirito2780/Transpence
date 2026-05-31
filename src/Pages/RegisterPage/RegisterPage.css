@@ -82,13 +82,13 @@
     margin-bottom: 10px;
 }
 .RegisterButtonFirstWrapper{
-    margin-top: 20px;
+    margin-top: 5px;
     width: 100%;
     display: flex;
     justify-content: center;
 }
 .RegisterMotion{
-    position: absolute;
+    position: relative;
     width: 100%;
 }
 .fileUploader{
@@ -134,17 +134,17 @@ input[type="file"] {
 .RegisterErrorUserNameMessage{
     position: absolute;
     top:10px;
-    color: darkred;
+    color: tomato;
 }
 .RegisterErrorEmailMessage{
     position: absolute;
     bottom:165px;
-    color: darkred;
+    color: tomato;
 }
 .RegisterErrorPasswordMessage{
  position: absolute;
     bottom:100px;
-    color: darkred;
+    color: tomato;
 }
 .BackToRegiLog{
     background-color: transparent;

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { type SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../Store/Store.ts";
@@ -8,13 +7,29 @@ import { setToken } from "../../Slices/authSlice.tsx";
 import { useDispatch } from "react-redux";
 import { setCurrency } from "../../Slices/currencySlice.tsx";
 import { API_URL } from "../../api/api.ts";
+import useFetch from "../../Hooks/useFetch.ts";
 
 interface ProfileSection {
   email: string;
   id: number;
   username: string;
 }
+interface INewNameResponse {
+  detail: string;
+  username: string;
+}
+interface INewEmailResponse {
+  detail: string;
+  email: string;
+}
 
+interface INewCurrencyArray {
+  currency: SetStateAction<string[]>;
+}
+interface INewPasswordResponse {
+  new_password: string;
+  current_password: string;
+}
 interface ProfileSectionProps {
   setError: (value: boolean) => void;
   setTextMessage: (m: string) => void;
@@ -25,7 +40,6 @@ interface ProfileSectionProps {
 const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [userData, setUserData] = useState<ProfileSection | null>(null);
   const [change, setChange] = useState<boolean>(false);
   const [oldUsername, setOldUsername] = useState<string>("");
   const [oldEmail, setOldEmail] = useState<string>("");
@@ -40,6 +54,73 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   const currency = useSelector(
     (state: RootState) => state.CurrencySlice.currency,
   );
+  const getUserData = useFetch<ProfileSection>(
+    "get",
+    `${API_URL}/auth/users/me/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data = getUserData.state;
+  const deleteUserRequest = useFetch(
+    "delete",
+    `${API_URL}/auth/users/me/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const changeUserUsername = useFetch<INewNameResponse>(
+    "post",
+    `${API_URL}/auth/users/set_username/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const changeUserEmail = useFetch<INewEmailResponse>(
+    "post",
+    `${API_URL}/auth/users/set_email/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const changeUserPassword = useFetch<INewPasswordResponse>(
+    "post",
+    `${API_URL}/auth/users/set_password/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const getCurrency = useFetch<INewCurrencyArray>(
+    "get",
+    `${API_URL}/currency/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+
   useEffect(() => {
     const savedCurrency = localStorage.getItem("currency");
     if (savedCurrency) {
@@ -48,21 +129,23 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/auth/users/me/`, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setUserData(res.data);
-        setEmail(res.data.email);
-        setUsername(res.data.username);
-        setOldEmail(res.data.email);
-        setOldUsername(res.data.username);
-      })
-      .catch((err) => console.log(err));
+    const fetchUserData = async () => {
+      try {
+        const response = await getUserData.fetchData();
+        if (response?.status == 404) {
+          navigate("/regilog");
+        }
+        if (response) {
+          setEmail(response.data.email);
+          setUsername(response.data.username);
+          setOldEmail(response.data.email);
+          setOldUsername(response.data.username);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchUserData();
   }, [fetching]);
 
   const changeInputs = [
@@ -93,128 +176,111 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
   ];
 
   const handleCancel = () => {
-    if (userData) {
-      setUsername(userData.username);
-      setEmail(userData.email);
+    if (data) {
+      setUsername(data.username);
+      setEmail(data.email);
       setCurrentPassword("");
       setNewPassword("");
     }
     setChange(false);
   };
 
-  const handleChanges = () => {
-    setFetching(true);
-    console.log(oldEmail);
-    console.log(username);
-    if (oldUsername != username) {
-      const formDataUsername = new FormData();
-      formDataUsername.append("new_username", username);
+  const handleChanges = async () => {
+    try {
+      setFetching(true);
+      if (oldUsername != username) {
+        try {
+          const formDataUsername = new FormData();
+          formDataUsername.append("new_username", username);
 
-      axios
-        .post(`${API_URL}/auth/users/set_username/`, formDataUsername, {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          setFetching(false);
-          setUsername(res.data.new_username);
-          setOldUsername(res.data.new_username);
+          const nameResponse =
+            await changeUserUsername.fetchData(formDataUsername);
+
+          if (nameResponse.status == 400) {
+            props.setTextMessage(nameResponse.data.detail);
+            props.setError(true);
+            props.setMessage(true);
+            return;
+          }
+
+          setUsername(nameResponse.data.username);
+          setOldUsername(nameResponse.data.username);
+
           props.setMessage(true);
-          props.setTextMessage(res.data.detail);
-          console.log(res.data);
+          props.setTextMessage(nameResponse.data.detail);
           props.setError(false);
+
           props.setChanges((prev: boolean) => !prev);
-        })
-        .catch((err) => {
-          console.log(err);
-
+        } catch (e) {
+          console.log(e);
           props.setMessage(true);
-          props.setTextMessage(err.message);
           props.setError(true);
+        } finally {
+          setFetching(false);
+        }
+      }
+      if (oldEmail != email) {
+        try {
+          const formDataEmail = new FormData();
+          formDataEmail.append("email", email);
+          const emailResponse = await changeUserEmail.fetchData(formDataEmail);
+          setEmail(emailResponse.data.email);
+          setOldEmail(emailResponse.data.email);
           props.setMessage(true);
-        });
-    }
-    if (oldEmail != email) {
-      const formDataEmail = new FormData();
-      formDataEmail.append("email", email);
-
-      axios
-        .post(`${API_URL}/auth/users/set_email/`, formDataEmail, {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          setEmail(res.data.email);
-          setOldEmail(res.data.email);
-          props.setMessage(true);
-          props.setTextMessage(res.data.detail);
-          console.log(res.data);
+          props.setTextMessage(emailResponse.data.detail);
           props.setError(false);
           setFetching(false);
-        })
-        .catch((err) => {
-          console.log(err);
 
+          if (emailResponse.status == 400) {
+            props.setTextMessage(emailResponse.data.detail);
+            props.setError(true);
+            props.setMessage(true);
+            return;
+          }
+        } catch (e) {
+          console.log(e);
           props.setMessage(true);
-          props.setTextMessage(err.message);
           props.setError(true);
-        });
-    }
-    if (
-      currentPassword.length > 0 &&
-      newPassword.length > 0 &&
-      newPassword != currentPassword
-    ) {
-      const formDataPassword = new FormData();
-      formDataPassword.append("new_password", newPassword);
-      formDataPassword.append("current_password", currentPassword);
-
-      axios
-        .post(`${API_URL}/auth/users/set_password/`, formDataPassword, {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then(() => {
+        }
+      }
+      if (
+        currentPassword.length > 0 &&
+        newPassword.length > 0 &&
+        newPassword != currentPassword
+      ) {
+        try {
+          const formDataPassword = new FormData();
+          formDataPassword.append("new_password", newPassword);
+          formDataPassword.append("current_password", currentPassword);
+          const passwordResponse =
+            await changeUserPassword.fetchData(formDataPassword);
+          console.log(passwordResponse.status);
           props.setMessage(true);
           setFetching(false);
           props.setError(false);
-        })
-        .catch((err) => {
-          console.log(err);
-
+        } catch (e) {
+          console.log(e);
           props.setMessage(true);
-          props.setTextMessage(err.message);
           props.setError(true);
-        });
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
 
     setChange((prev) => !prev);
   };
-  const handleDelete = () => {
-    axios
-      .delete(`${API_URL}/auth/users/me/`, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-        data: {
-          current_password: currentPassword,
-        },
-      })
-      .then(() => {
-        localStorage.removeItem("token");
-        dispatch(setToken(null));
-        navigate("/regilog");
-      })
-      .catch((err) => {
-        alert(err);
+  const handleDelete = async () => {
+    try {
+      await deleteUserRequest.fetchData({
+        current_password: currentPassword,
       });
+      localStorage.removeItem("token");
+      dispatch(setToken(null));
+      navigate("/regilog");
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const container = {
@@ -231,19 +297,18 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
     visible: { opacity: 1, y: 20 },
   };
   useEffect(() => {
-    axios
-      .get(`${API_URL}/currency/`, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setCurrencyList(res.data.currency);
-      })
-      .catch((e) => {
+    const getCurrencyFetch = async () => {
+      try {
+        const currencyResponse = await getCurrency.fetchData();
+        console.log(getCurrency.state);
+        if (currencyResponse?.data.currency.length > 0) {
+          setCurrencyList(currencyResponse.data.currency);
+        }
+      } catch (e) {
         console.log(e);
-      });
+      }
+    };
+    void getCurrencyFetch();
   }, []);
 
   return (
@@ -283,8 +348,8 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
               </>
             ) : (
               <>
-                <h2 className={"ProfileNickname"}>{userData?.username}</h2>
-                <p className={"ProfileEmail"}>{userData?.email}</p>
+                <h2 className={"ProfileNickname"}>{data?.username}</h2>
+                <p className={"ProfileEmail"}>{data?.email}</p>
                 <select
                   className={"currencySelector"}
                   name="currency"
@@ -327,8 +392,8 @@ const ProfilePage = ({ ...props }: ProfileSectionProps) => {
               <button
                 className={"ProfileButton"}
                 onClick={() => {
-                  setUsername(userData ? userData.username : "");
-                  setEmail(userData ? userData.email : "");
+                  setUsername(data ? data.username : "");
+                  setEmail(data ? data.email : "");
                   setChange((prev) => !prev);
                 }}
               >

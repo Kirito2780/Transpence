@@ -13,6 +13,7 @@ import { CreditSelector } from "../Pages/CreditPage/AddCredit/CreditSelector/Cre
 import { InstallmentPlanForm } from "../Pages/CreditPage/AddCredit/Forms/InstallmentPlanForm.tsx";
 import { ConsumerLoanForm } from "../Pages/CreditPage/AddCredit/Forms/ConsumerLoanForm.tsx";
 import { CustomForm } from "../Pages/CreditPage/AddCredit/Forms/CustomForm.tsx";
+import { CreditItemPage } from "../Pages/CreditItemPage/CreditItemPage.tsx";
 const MainPage = lazy(() => import("../Pages/MainPage/MainPage.tsx"));
 const ProfilePage = lazy(() => import("../Pages/ProfilePage/ProfilePage.tsx"));
 const ComparePage = lazy(() => import("../Pages/ComparePage/ComparePage.tsx"));
@@ -79,6 +80,7 @@ function App() {
                   </CreditAvailability>
                 }
               />
+              <Route path={"/credit/:id"} element={<CreditItemPage />} />
               <Route path={"/operations/:id"} element={<ItemPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>

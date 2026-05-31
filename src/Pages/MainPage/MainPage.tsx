@@ -20,6 +20,7 @@ import { type SubmitHandler } from "react-hook-form";
 import { FilterSection } from "./FilterSection.tsx";
 import { useAuth } from "../../Hooks/useAuth.ts";
 import { API_URL } from "../../api/api.ts";
+import useFetch from "../../Hooks/useFetch.ts";
 
 export interface IChartsData {
   operation_type: string;
@@ -84,7 +85,51 @@ const MainPage = () => {
   const [descAsc, setDescAsc] = useState<string>();
   const [activeFilter, setActiveFilter] = useState<any>(null);
   const { userName, logout } = useAuth();
-
+  const startTimeIntervalFetch = useFetch<any>(
+    "post",
+    `${API_URL}/graph_ops/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        accept: "application/json",
+      },
+    },
+    false,
+  );
+  const endIntervalFetch = useFetch<any>(
+    "post",
+    `${API_URL}/graph/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const searchDataFetch = useFetch<any>(
+    "post",
+    `${API_URL}/graph_ops/`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
+  const fetchTags = useFetch<any>("get", `${API_URL}/tags/`);
+  const fetchFilter = useFetch<any>(
+    "post",
+    `${API_URL}/graph_ops/?page=1`,
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+    false,
+  );
   const expensesAnimation = {
     initial: { scale: 0 },
     animate: { scale: 1 },
@@ -108,43 +153,32 @@ const MainPage = () => {
     }
   }, [date_end, date_start, isConfirmed]);
 
-  const sendTimeinterval = () => {
+  const sendTimeinterval = async () => {
     if (!date_start || !date_end) return;
-    const startFormatted = date_start?.toISOString().slice(0, 10);
-    const endFormatted = date_end?.toISOString().slice(0, 10);
+    try {
+      const startFormatted = date_start?.toISOString().slice(0, 10);
+      const endFormatted = date_end?.toISOString().slice(0, 10);
 
-    const timeInterval = {
-      date_start: startFormatted,
-      date_end: endFormatted,
-      tags: catArr,
-    };
-    axios
-      .post(`${API_URL}/graph_ops/`, timeInterval, {
-        headers: {
-          Authorization: `Token ${token}`,
-          accept: "application/json",
-        },
-      })
-      .then((res) => {
-        setItemData(res.data.details.results);
-        setAllPages(res.data.details.count);
-        setActiveFilter(null);
-        setPage(1);
-      });
-    axios
-      .post(`${API_URL}/graph/`, timeInterval, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setChartData(res.data.total);
-        setBarChartData(res.data.date_detail);
-        setTagsDiagram(res.data.tags_detail);
-        setIsConfirmed(false);
-      })
-      .catch((error) => console.log(`Error:${error}`));
+      const timeInterval = {
+        date_start: startFormatted,
+        date_end: endFormatted,
+        tags: catArr,
+      };
+
+      const firstReq = await startTimeIntervalFetch.fetchData(timeInterval);
+      setItemData(firstReq.data.details.results);
+      setAllPages(firstReq.data.details.count);
+      setActiveFilter(null);
+      setPage(1);
+
+      const secondReq = await endIntervalFetch.fetchData(timeInterval);
+      setChartData(secondReq.data.total);
+      setBarChartData(secondReq.data.date_detail);
+      setTagsDiagram(secondReq.data.tags_detail);
+      setIsConfirmed(false);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const PagesLength = useMemo(() => {
@@ -169,12 +203,15 @@ const MainPage = () => {
   }, [token]);
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/tags/`)
-      .then((res) => {
-        setCategories(res.data.tags);
-      })
-      .catch((err) => console.log(err));
+    const getCategories = async () => {
+      try {
+        const req = await fetchTags.fetchData();
+        setCategories(req.data.tags);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getCategories();
   }, []);
 
   const handlePage = (pg: number) => {
@@ -212,37 +249,32 @@ const MainPage = () => {
       });
   };
 
-  const handleFilterSubmit: SubmitHandler<IFilterForm> = (data) => {
+  const handleFilterSubmit: SubmitHandler<IFilterForm> = async (data) => {
     if (!date_start || !date_end) return;
-    const startFormatted = date_start?.toISOString().slice(0, 10);
-    const endFormatted = date_end?.toISOString().slice(0, 10);
-    const filterData = {
-      date_start: startFormatted,
-      date_end: endFormatted,
-      tags: catArr,
-      op_type: expIncArr,
-      max_sum: data.max_sum,
-      min_sum: data.min_sum,
-      desc: descAsc ? descAsc : "date",
-      q: search,
-    };
-    console.log(filterData);
-    setActiveFilter(filterData);
-    axios
-      .post(`${API_URL}/graph_ops/?page=1`, filterData, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setAllPages(res.data.details.count);
-        setItemData(res.data.details.results);
-        setPage(1);
-      });
+    try {
+      const startFormatted = date_start?.toISOString().slice(0, 10);
+      const endFormatted = date_end?.toISOString().slice(0, 10);
+      const filterData = {
+        date_start: startFormatted,
+        date_end: endFormatted,
+        tags: catArr,
+        op_type: expIncArr,
+        max_sum: data.max_sum,
+        min_sum: data.min_sum,
+        desc: descAsc ? descAsc : "date",
+        q: search,
+      };
+      console.log(filterData);
+      setActiveFilter(filterData);
+      const req = await fetchFilter.fetchData(filterData);
+      setAllPages(req.data.details.count);
+      setItemData(req.data.details.results);
+      setPage(1);
+    } catch (e) {
+      console.log(e);
+    }
   };
-  const handleSearch = () => {
+  const handleSearch = async () => {
     let query = search;
     if (query.length <= 3 && query.length > 0) {
       query += "*";
@@ -257,19 +289,14 @@ const MainPage = () => {
       tags: catArr,
       q: query,
     };
-    axios
-      .post(`${API_URL}/graph_ops/`, searchData, {
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setAllPages(res.data.details.count);
-        setItemData(res.data.details.results);
-        setPage(1);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const req = await searchDataFetch.fetchData(searchData);
+      setAllPages(req.data.details.count);
+      setItemData(req.data.details.results);
+      setPage(1);
+    } catch (e) {
+      console.log(e);
+    }
   };
   return (
     <div>
@@ -474,6 +501,7 @@ const MainPage = () => {
             setChangeDiagram={setChangeDiagram}
           />
         ) : null}
+
         <ChartsContainer
           chartData={chartData}
           barChartData={barChartData}
